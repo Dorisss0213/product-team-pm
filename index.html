@@ -369,6 +369,10 @@
     .stat-label { font-size: 13px; color: var(--text2); margin-top: 4px; }
 
     /* ── Timeline Feed ── */
+    .timeline-header { display: flex; align-items: center; justify-content: space-between; padding-bottom: 16px; border-bottom: 1px solid var(--border); margin-bottom: 4px; }
+    .timeline-header-title { font-size: 13px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; }
+    .btn-clear { background: none; border: 1px solid var(--border); color: var(--text3); font-size: 12px; padding: 4px 12px; border-radius: 6px; cursor: pointer; transition: all 0.15s; }
+    .btn-clear:hover { color: var(--red); border-color: var(--red); background: #fef2f2; }
     .timeline-feed { display: flex; flex-direction: column; }
     .timeline-empty { text-align: center; padding: 48px 0; color: var(--text3); font-size: 14px; }
 
@@ -1303,6 +1307,58 @@
     .task-note-input::placeholder {
       color: var(--text3);
     }
+    /* Inline text input (task name) */
+    .task-name-input {
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text);
+      width: 100%;
+      max-width: 260px;
+      outline: none;
+      transition: all var(--transition);
+    }
+    .task-name-input:hover {
+      border-color: var(--border2);
+      background: var(--bg3);
+    }
+    .task-name-input:focus {
+      border-color: var(--accent);
+      background: var(--bg2);
+    }
+    .task-name-input.done {
+      text-decoration: line-through;
+      color: var(--text3);
+    }
+    /* Inline date input (due date / completed date) */
+    .task-date-input {
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 4px;
+      padding: 2px 4px;
+      font-size: 11.5px;
+      color: var(--text2);
+      width: 90px;
+      outline: none;
+      transition: all var(--transition);
+      font-family: inherit;
+    }
+    .task-date-input:hover {
+      border-color: var(--border2);
+      background: var(--bg3);
+    }
+    .task-date-input:focus {
+      border-color: var(--accent);
+      background: var(--bg2);
+      color: var(--text);
+    }
+    .task-date-input.completed {
+      color: var(--green);
+      font-weight: 500;
+    }
     .task-del {
       display: inline-flex; align-items: center; justify-content: center;
       width: 22px; height: 22px;
@@ -1497,6 +1553,10 @@
     <!-- ── DASHBOARD ─────────────────────────────── -->
     <div class="page active" id="page-dashboard">
       <div class="dashboard-wrapper">
+        <div class="timeline-header" id="timeline-header" style="display:none;">
+          <span class="timeline-header-title">Activity Feed</span>
+          <button class="btn btn-clear" onclick="clearActivityLog()">Clear All</button>
+        </div>
         <div class="timeline-feed" id="timeline-feed"></div>
       </div>
     </div>
@@ -1604,14 +1664,15 @@
     </div>
     <div class="form-row">
       <div class="form-group">
-        <label class="form-label">Project</label>
+        <label class="form-label">Project *</label>
         <select class="form-select" id="task-project-select">
           <!-- Populated by refreshTaskProjectSelect() -->
         </select>
       </div>
       <div class="form-group">
-        <label class="form-label">Assignee</label>
+        <label class="form-label">Assignee *</label>
         <select class="form-select" id="task-member-select">
+          <option value="">-- Select --</option>
           <option>Doris PAN</option>
           <option>Edelene</option>
           <option>Hailey Liang</option>
@@ -1622,25 +1683,9 @@
         </select>
       </div>
     </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label class="form-label">Priority</label>
-        <select class="form-select" id="task-priority">
-          <option value="high">▲ High</option>
-          <option value="medium" selected>■ Medium</option>
-          <option value="low">◆ Low</option>
-        </select>
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label class="form-label">Start Date</label>
-        <input type="text" class="form-input" id="task-start" placeholder="yyyy-mm-dd" onmousedown="if(this.type==='text')this.type='date'" />
-      </div>
-      <div class="form-group">
-        <label class="form-label">Due Date</label>
-        <input type="text" class="form-input" id="task-due" placeholder="yyyy-mm-dd" onmousedown="if(this.type==='text')this.type='date'" />
-      </div>
+    <div class="form-group">
+      <label class="form-label">Due Date *</label>
+      <input type="date" class="form-input" id="task-due" />
     </div>
     <div class="form-group">
       <label class="form-label">Description</label>
@@ -1699,11 +1744,11 @@
     <div class="form-row">
       <div class="form-group">
         <label class="form-label">Start Date <span style="color:var(--red)">*</span></label>
-        <input type="text" class="form-input" id="proj-start-date" placeholder="yyyy-mm-dd" onmousedown="if(this.type==='text')this.type='date'" />
+        <input type="date" class="form-input" id="proj-start-date" />
       </div>
       <div class="form-group">
         <label class="form-label">Due Date <span style="color:var(--red)">*</span></label>
-        <input type="text" class="form-input" id="proj-due-date" placeholder="yyyy-mm-dd" onmousedown="if(this.type==='text')this.type='date'" />
+        <input type="date" class="form-input" id="proj-due-date" />
       </div>
     </div>
     <div class="form-group">
@@ -1776,6 +1821,19 @@ function saveActivityLog() {
   try {
     localStorage.setItem('teamflow_activity_log', JSON.stringify(activityLog.slice(0, 200)));
   } catch (e) {}
+}
+async function clearActivityLog() {
+  const confirmed = await showConfirm({
+    title: 'Clear Activity',
+    message: 'This will permanently delete <strong>all activity records</strong>. This action cannot be undone.',
+    icon: '🗑️',
+    confirmLabel: 'Clear All',
+    danger: true,
+  });
+  if (!confirmed) return;
+  activityLog = [];
+  localStorage.removeItem('teamflow_activity_log');
+  if (currentPage === 'dashboard') renderDashboard();
 }
 
 function recordActivity(actionType, taskName, assignee, project, detail) {
@@ -2089,14 +2147,7 @@ const GATING_TASKS = [
 ];
 
 // ── New Project Modal ─────────────────────────────────
-function resetDateInputs() {
-  document.querySelectorAll('input[placeholder="yyyy-mm-dd"]').forEach(el => {
-    if (el.type === 'date') el.type = 'text';
-  });
-}
-
 function openNewProjectModal() {
-  resetDateInputs();
   editingProjectId = null;
   document.getElementById('project-modal-title').textContent = 'New Project';
   document.getElementById('project-save-btn').textContent = 'Create Project';
@@ -2204,7 +2255,7 @@ function onCategoryChange() {
         <div class="gating-task-name">
           <input type="text" value="${t.label}" readonly id="gating-task-${i}" />
         </div>
-        <input type="text" class="gating-due" id="gating-due-${i}" value="${projStart}" placeholder="yyyy-mm-dd" onmousedown="if(this.type==='text')this.type='date'" />
+        <input type="date" class="gating-due" id="gating-due-${i}" value="${projStart}" />
       </div>
     `).join('');
   } else {
@@ -2311,7 +2362,6 @@ async function createProject() {
 
 // ── Edit Project ──────────────────────────────────────
 function editProject(id) {
-  resetDateInputs();
   const proj = projects.find(p => p.id === id);
   if (!proj) return;
 
@@ -2430,9 +2480,10 @@ function renderDashboardProjects() {
 function refreshTaskProjectSelect() {
   const sel = document.getElementById('task-project-select');
   if (!sel) return;
-  sel.innerHTML = projects.length
+  sel.innerHTML = '<option value="">-- Select --</option>' +
+    (projects.length
     ? projects.map(p => `<option value="${p.name}">${p.name}</option>`).join('')
-    : '<option value="">(No projects)</option>';
+    : '<option value="" disabled>(No projects)</option>');
 }
 
 // ── Navigation ───────────────────────────────────────
@@ -2545,10 +2596,13 @@ function renderDashboard() {
   }
 
   const feed = document.getElementById('timeline-feed');
+  const header = document.getElementById('timeline-header');
   if (!activityLog.length && !tasks.length) {
+    header.style.display = 'none';
     feed.innerHTML = '<div class="timeline-empty">No activity yet. Create your first task!</div>';
     return;
   }
+  header.style.display = activityLog.length > 0 ? 'flex' : 'none';
 
   // Use activity log if available; fall back to task state
   if (activityLog.length > 0) {
@@ -2889,7 +2943,7 @@ function renderList(data) {
         </td>
         <td>
           <div class="task-name">
-            <span class="task-name-text ${isDone?'done':''}">${t.name}</span>
+            <input type="text" class="task-name-input ${isDone?'done':''}" value="${escapeHtml(t.name)}" data-task-id="${t.id}" data-field="name" onchange="updateTaskFromInput(this)" onblur="updateTaskFromInput(this)" />
           </div>
         </td>
         <td>
@@ -2910,10 +2964,10 @@ function renderList(data) {
           <span class="status-pill" style="background:${s.bg};color:${s.color}" onclick="showStatusSelect(this)" title="Click to change status">${s.label}</span>
         </td>
         <td style="color:${t.status==='overdue'?'var(--red)':'var(--text2)'}">
-          ${formatDate(t.due)}
+          <input type="date" class="task-date-input" value="${t.due || ''}" data-task-id="${t.id}" data-field="due" onchange="updateTaskFromInput(this)" title="${t.due ? 'Due: ' + t.due : 'Set due date'}" style="color:${t.status==='overdue'?'var(--red)':'var(--text2)'}" />
         </td>
         <td>
-          ${t.completedDate ? `<span style="color:var(--green);font-weight:500">${formatDate(t.completedDate)}</span>` : '—'}
+          <input type="date" class="task-date-input completed" value="${t.completedDate || ''}" data-task-id="${t.id}" data-field="completedDate" onchange="updateTaskFromInput(this)" title="${t.completedDate ? 'Completed: ' + t.completedDate : 'Set completed date'}" />
         </td>
         <td>
           <input type="text" class="task-note-input" value="${t.note || ''}" placeholder="Add notes..." onchange="updateTaskNote(${t.id}, this.value)" title="Click to add notes" />
@@ -3011,13 +3065,33 @@ async function toggleTask(id) {
 }
 
 // ── Inline Task Update ────────────────────────────────
+
+// Helper: extract task id + field from an input element and call updateTask
+function updateTaskFromInput(el) {
+  const taskId = Number(el.dataset.taskId);
+  const field  = el.dataset.field;
+  const value  = el.value.trim();
+  if (!taskId || !field) return;
+
+  // For name field, don't save if empty
+  if (field === 'name' && !value) {
+    el.value = tasks.find(t => t.id === taskId)?.name || '';
+    return;
+  }
+
+  updateTask(taskId, field, value);
+}
+
 async function updateTask(id, field, value) {
   const t = tasks.find(t => t.id === id);
   if (!t) return;
   if (t[field] === value) return;
 
   // Map camelCase → snake_case for DB
-  const dbField = { assignee:'assignee', priority:'priority', status:'status' }[field] || field;
+  const dbField = {
+    assignee: 'assignee', priority: 'priority', status: 'status',
+    due: 'due_date', completedDate: 'completed_date', name: 'name',
+  }[field] || field;
   const { error } = await sb.from('tasks').update({ [dbField]: value }).eq('id', id);
   if (error) { showToast('Update failed: ' + error.message, true); return; }
   const oldValue = t[field];
@@ -3036,6 +3110,12 @@ async function updateTask(id, field, value) {
     recordActivity('assignee', t.name, value, t.project, `reassigned "${t.name}" from ${oldValue || 'unassigned'} to ${value}`);
   } else if (field === 'priority') {
     recordActivity('priority', t.name, t.assignee, t.project, `set "${t.name}" priority to ${priorityConfig[value].label}`);
+  } else if (field === 'name') {
+    recordActivity('rename', value, t.assignee, t.project, `renamed task "${oldValue}" to "${value}"`);
+  } else if (field === 'due') {
+    recordActivity('due', t.name, t.assignee, t.project, value ? `set "${t.name}" due to ${value}` : `removed due date from "${t.name}"`);
+  } else if (field === 'completedDate') {
+    recordActivity('completed', t.name, t.assignee, t.project, value ? `set "${t.name}" completed date to ${value}` : `removed completed date from "${t.name}"`);
   }
 
   const active = document.querySelector('.page.active');
@@ -3056,6 +3136,12 @@ async function updateTask(id, field, value) {
     showToast(`"${t.name}" assigned to ${value}`);
   } else if (field === 'priority') {
     showToast(`"${t.name}" priority set to ${priorityConfig[value].label}`);
+  } else if (field === 'name') {
+    showToast(`Task renamed to "${value}" ✓`);
+  } else if (field === 'due') {
+    showToast(value ? `"${t.name}" due ${formatDate(value)}` : `Removed due date`);
+  } else if (field === 'completedDate') {
+    // silent - completed date changes are quiet
   }
 }
 
@@ -3467,56 +3553,61 @@ function renderMembers() {
 
 // ── Modal ────────────────────────────────────────────
 function openModal(projectName) {
-  resetDateInputs();
   taskModalProject = projectName || null;
   refreshTaskProjectSelect();
   const projectSel = document.getElementById('task-project-select');
   const memberSel  = document.getElementById('task-member-select');
-  const prioritySel = document.getElementById('task-priority');
+  const nameInput  = document.getElementById('task-name-input');
+  const dueInput   = document.getElementById('task-due');
+  const descInput  = document.querySelector('#modal-overlay textarea');
 
-  // Reset to defaults
-  if (projectSel.options.length > 0) projectSel.selectedIndex = 0;
-  memberSel.selectedIndex = 0;
-  prioritySel.value = 'medium';
+  // Always clear previous inputs
+  nameInput.value = '';
+  dueInput.value = '';
+  if (descInput) descInput.value = '';
 
-  // Pre-fill from project context
   if (projectName) {
+    // Same-project context → pre-fill project + first lead only
     const proj = projects.find(p => p.name === projectName);
     if (proj) {
-      // Project
       projectSel.value = proj.name;
-      // Assignee → first lead
       const firstLead = proj.lead.split(',')[0].trim();
       const leadOption = Array.from(memberSel.options).find(o => o.value === firstLead);
       if (leadOption) memberSel.value = firstLead;
-      // Priority
-      if (priorityConfig[proj.priority]) prioritySel.value = proj.priority;
+      else memberSel.selectedIndex = 0;
     }
+  } else {
+    // No project context → blank defaults
+    projectSel.selectedIndex = 0;
+    memberSel.selectedIndex = 0;
   }
 
   document.getElementById('modal-overlay').classList.add('open');
-  document.getElementById('task-name-input').focus();
+  nameInput.focus();
 }
 function closeModal(e) {
   if (!e || e.target === document.getElementById('modal-overlay'))
     document.getElementById('modal-overlay').classList.remove('open');
 }
 async function createTask() {
-  const name = document.getElementById('task-name-input').value.trim();
-  if (!name) { showToast('Please enter task name', true); return; }
+  const name     = document.getElementById('task-name-input').value.trim();
+  const project  = document.getElementById('task-project-select').value;
+  const assignee = document.getElementById('task-member-select').value;
+  const dueVal   = document.getElementById('task-due').value;
+
+  if (!name)      { showToast('Please enter task name', true); return; }
+  if (!project)   { showToast('Please select a project', true); return; }
+  if (!assignee)  { showToast('Please select an assignee', true); return; }
+  if (!dueVal)    { showToast('Please set a due date', true); return; }
   if (!projects.length) { showToast('Please create a project first', true); return; }
-  const startVal = document.getElementById('task-start').value;
-  const dueVal = document.getElementById('task-due').value;
-  if (!dueVal) { showToast('Please set due date', true); return; }
 
   showLoading('Creating task...');
   const { data, error } = await sb.from('tasks').insert([{
     name,
-    project:    document.getElementById('task-project-select').value,
-    assignee:   document.getElementById('task-member-select').value,
-    priority:   document.getElementById('task-priority').value,
+    project,
+    assignee,
     status:     'todo',
-    start_date: startVal || dueVal,
+    start_date: dueVal,
     due_date:   dueVal,
   }]).select().single();
   hideLoading();
@@ -3527,7 +3618,6 @@ async function createTask() {
   const taskProject = newTask.project || 'Unassigned';
   recordActivity('created', name, newTask.assignee, taskProject, `created task "${name}"`);
   document.getElementById('modal-overlay').classList.remove('open');
-  document.getElementById('task-name-input').value = '';
   renderDashboardProjects();
   showToast(`Task "${name}" created 🎉`);
 
@@ -3576,6 +3666,11 @@ function showToast(msg, isError=false) {
 }
 
 // ── Helpers ──────────────────────────────────────────
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
 function formatDate(str) {
   if (!str) return '—';
   const d = new Date(str);
@@ -3601,7 +3696,94 @@ loadAll().then(() => {
   refreshTaskProjectSelect();
   populateFilterDropdowns();
   renderList(tasks);
+  enableRealtime();
 });
+
+// ── 🔄 Supabase Realtime ────────────────────────────
+function enableRealtime() {
+  const channel = sb.channel('live-sync');
+
+  channel
+    .on('postgres_changes',
+      { event: '*', schema: 'public', table: 'projects' },
+      (payload) => {
+        handleProjectRealtime(payload);
+      }
+    )
+    .on('postgres_changes',
+      { event: '*', schema: 'public', table: 'tasks' },
+      (payload) => {
+        handleTaskRealtime(payload);
+      }
+    )
+    .subscribe((status) => {
+      if (status === 'SUBSCRIBED') {
+        console.log('🔁 Realtime sync active');
+      } else if (status === 'CLOSED' || status === 'CHANNEL_ERROR') {
+        console.warn('Realtime disconnected, retrying in 3s...');
+        setTimeout(() => { if (!editingProjectId) enableRealtime(); }, 3000);
+      }
+    });
+}
+
+function handleProjectRealtime(payload) {
+  const { eventType, new: newRow, old: oldRow } = payload;
+
+  switch (eventType) {
+    case 'INSERT':
+      projects.push(rowToProject(newRow));
+      break;
+    case 'UPDATE': {
+      const idx = projects.findIndex(p => Number(p.id) === Number(newRow.id));
+      if (idx !== -1) Object.assign(projects[idx], rowToProject(newRow));
+      break;
+    }
+    case 'DELETE':
+      projects = projects.filter(p => Number(p.id) !== Number(oldRow.id));
+      break;
+  }
+
+  safeReRender();
+}
+
+function handleTaskRealtime(payload) {
+  const { eventType, new: newRow, old: oldRow } = payload;
+
+  switch (eventType) {
+    case 'INSERT':
+      tasks.push(rowToTask(newRow));
+      break;
+    case 'UPDATE': {
+      const idx = tasks.findIndex(t => Number(t.id) === Number(newRow.id));
+      if (idx !== -1) Object.assign(tasks[idx], rowToTask(newRow));
+      break;
+    }
+    case 'DELETE':
+      tasks = tasks.filter(t => Number(t.id) !== Number(oldRow.id));
+      break;
+  }
+
+  safeReRender();
+}
+
+function safeReRender() {
+  // Skip re-render if user is editing a project modal
+  if (editingProjectId) return;
+
+  requestAnimationFrame(() => {
+    renderSidebarProjects();
+    switch (currentPage) {
+      case 'kanban':   renderKanban(); break;
+      case 'dashboard': renderDashboard(); break;
+      case 'list':
+        renderList(tasks);
+        refreshTaskProjectSelect();
+        break;
+      case 'gating':    renderGating(); break;
+      default: break;
+    }
+  });
+}
 
 
 </script>
