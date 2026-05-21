@@ -4,89 +4,75 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Product Team Project Management</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <style>
     /* ─── Reset & Base ─────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg: #0a0e1a;
-      --bg2: #111827;
-      --bg3: #1a2235;
-      --bg4: #1e2a40;
-      --border: #2a3a5c;
-      --border2: #3a4a6c;
-      --text: #e8edf5;
-      --text2: #8896b3;
-      --text3: #5a6a8a;
-      --accent: #00d4ff;
-      --accent-light: rgba(0, 212, 255, 0.15);
-      --accent-hover: #00e5ff;
-      --accent-glow: 0 0 20px rgba(0, 212, 255, 0.4);
-      --green: #00ff88;
-      --green-glow: 0 0 15px rgba(0, 255, 136, 0.3);
-      --red: #ff3366;
-      --red-glow: 0 0 15px rgba(255, 51, 102, 0.3);
-      --orange: #ff9f1c;
-      --orange-glow: 0 0 15px rgba(255, 159, 28, 0.3);
-      --purple: #a855f7;
-      --purple-glow: 0 0 15px rgba(168, 85, 247, 0.3);
-      --yellow: #ffd60a;
-      --yellow-glow: 0 0 15px rgba(255, 214, 10, 0.3);
+      --bg: #141416;
+      --bg2: #1c1c1f;
+      --bg3: #252528;
+      --bg4: #2e2e32;
+      --border: #323236;
+      --border2: #424248;
+      --text: #ebebed;
+      --text2: #9b9ba0;
+      --text3: #6b6b70;
+      --accent: #10b981;
+      --accent-light: rgba(16, 185, 129, 0.12);
+      --accent-hover: #059669;
+      --green: #22c55e;
+      --red: #ef4444;
+      --orange: #f97316;
+      --purple: #8b5cf6;
+      --yellow: #eab308;
+      --orange-light: rgba(249, 115, 22, 0.1);
+      --purple-light: rgba(139, 92, 246, 0.1);
+      --green-light: rgba(34, 197, 94, 0.1);
+      --yellow-light: rgba(234, 179, 8, 0.1);
       --sidebar-w: 260px;
       --radius: 6px;
       --radius-sm: 4px;
-      --shadow: 0 2px 8px rgba(0,0,0,.4);
-      --shadow-md: 0 4px 20px rgba(0,0,0,.5);
-      --shadow-lg: 0 8px 40px rgba(0,0,0,.6);
-      --transition: 200ms cubic-bezier(.4,0,.2,1);
+      --shadow: 0 1px 3px rgba(0,0,0,.15);
+      --shadow-md: 0 4px 12px rgba(0,0,0,.2);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,.3);
+      --transition: 200ms ease;
     }
     [data-theme="light"] {
       --bg: #ffffff;
       --bg2: #ffffff;
-      --bg3: #f5f5f5;
-      --bg4: #eeeeee;
-      --border: #e0e0e0;
-      --border2: #cccccc;
+      --bg3: #f8f9fb;
+      --bg4: #f1f3f6;
+      --border: #e2e5e9;
+      --border2: #d1d5db;
       --text: #1a1a1a;
-      --text2: #666666;
-      --text3: #999999;
-      --accent: #0066cc;
-      --accent-light: rgba(0, 102, 204, 0.08);
-      --accent-hover: #0055aa;
-      --accent-glow: none;
-      --green: #00a060;
-      --green-glow: none;
-      --red: #cc2244;
-      --red-glow: none;
-      --orange: #cc7700;
-      --orange-glow: none;
-      --purple: #7733cc;
-      --purple-glow: none;
-      --yellow: #aa8800;
-      --yellow-glow: none;
+      --text2: #555555;
+      --text3: #888888;
+      --accent: #10b981;
+      --accent-light: rgba(16, 185, 129, 0.08);
+      --accent-hover: #059669;
+      --green: #16a34a;
+      --red: #dc2626;
+      --orange: #d97706;
+      --purple: #7c6fe0;
+      --yellow: #b8860b;
+      --orange-light: rgba(234, 88, 12, 0.08);
+      --purple-light: rgba(124, 58, 237, 0.08);
+      --green-light: rgba(22, 163, 74, 0.08);
+      --yellow-light: rgba(202, 138, 4, 0.08);
+      --shadow: none;
+      --shadow-md: none;
+      --shadow-lg: none;
     }
     html { font-size: 14px; }
     body {
-      font-family: 'Rajdhani', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
       background: var(--bg);
       color: var(--text);
       display: flex;
       height: 100vh;
       overflow: hidden;
       transition: background var(--transition), color var(--transition);
-    }
-    /* Grid pattern overlay - only for dark mode */
-    [data-theme="dark"] body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: 
-        linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
-      background-size: 40px 40px;
-      pointer-events: none;
-      z-index: 0;
     }
     button { cursor: pointer; font-family: inherit; }
     input, select, textarea { font-family: inherit; }
@@ -101,7 +87,7 @@
     .sidebar {
       width: var(--sidebar-w);
       min-width: var(--sidebar-w);
-      background: linear-gradient(180deg, var(--bg2) 0%, var(--bg) 100%);
+      background: var(--bg2);
       border-right: 1px solid var(--border);
       display: flex;
       flex-direction: column;
@@ -111,16 +97,7 @@
       z-index: 10;
       position: relative;
     }
-    .sidebar::after {
-      content: '';
-      position: absolute;
-      right: 0;
-      top: 0;
-      bottom: 0;
-      width: 1px;
-      background: linear-gradient(180deg, var(--accent) 0%, transparent 50%);
-      opacity: 0.3;
-    }
+
     .sidebar-logo {
       display: flex;
       align-items: center;
@@ -130,21 +107,15 @@
     }
     .logo-icon {
       width: 36px; height: 36px;
-      background: linear-gradient(135deg, var(--accent) 0%, var(--purple) 100%);
+      background: var(--accent);
       border-radius: 8px;
       display: flex; align-items: center; justify-content: center;
       color: white; font-weight: 700; font-size: 14px;
-      font-family: 'Orbitron', sans-serif;
       flex-shrink: 0;
-      box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
     }
     .logo-name { 
       font-weight: 600; font-size: 16px; 
-      font-family: 'Orbitron', sans-serif;
-      letter-spacing: 1px;
-      background: linear-gradient(90deg, var(--accent), var(--purple));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: var(--text);
     }
 
     .sidebar-section { padding: 14px 10px 6px; }
@@ -152,7 +123,6 @@
       font-size: 10px; font-weight: 600; color: var(--text3);
       letter-spacing: .15em; text-transform: uppercase;
       padding: 0 10px 8px;
-      font-family: 'Orbitron', sans-serif;
     }
     .nav-item {
       display: flex; align-items: center; gap: 10px;
@@ -177,7 +147,6 @@
       color: var(--accent); 
       font-weight: 600;
       border-color: var(--accent);
-      box-shadow: var(--accent-glow);
     }
     .nav-item.active::before {
       content: '';
@@ -189,7 +158,6 @@
       height: 60%;
       background: var(--accent);
       border-radius: 0 2px 2px 0;
-      box-shadow: var(--accent-glow);
     }
     .nav-item .nav-icon { font-size: 16px; width: 20px; text-align: center; flex-shrink: 0; }
     .nav-badge {
@@ -225,6 +193,7 @@
       border-color: var(--border);
     }
     .project-item:hover .project-del { opacity: 1; }
+    .project-item:hover .project-edit { opacity: 1; }
     .project-item.active {
       background: var(--accent-light);
       border-color: var(--accent);
@@ -233,7 +202,6 @@
       width: 8px; height: 8px; 
       border-radius: 50%; 
       flex-shrink: 0;
-      box-shadow: 0 0 8px currentColor;
     }
     .project-del {
       margin-left: auto; opacity: 0;
@@ -242,6 +210,14 @@
       padding: 0 4px;
     }
     .project-del:hover { color: var(--red) !important; }
+    .project-edit {
+      opacity: 0;
+      font-size: 12px; color: var(--text3); line-height: 1;
+      transition: opacity var(--transition), color var(--transition);
+      padding: 0 3px;
+      cursor: pointer;
+    }
+    .project-edit:hover { color: var(--accent) !important; }
     .new-project-btn {
       display: flex; align-items: center; gap: 8px;
       padding: 8px 10px;
@@ -291,14 +267,13 @@
       padding: 0 28px;
       height: 56px;
       border-bottom: 1px solid var(--border);
-      background: linear-gradient(90deg, var(--bg2), var(--bg));
+      background: var(--bg2);
       flex-shrink: 0;
       transition: background var(--transition), border-color var(--transition);
     }
     .topbar-title { 
       font-weight: 600; font-size: 16px; 
-      font-family: 'Orbitron', sans-serif;
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
     }
     .topbar-views {
       display: flex; align-items: center; gap: 4px;
@@ -306,21 +281,22 @@
     }
     .view-btn {
       display: flex; align-items: center; gap: 6px;
-      padding: 6px 12px;
-      border-radius: var(--radius-sm);
+      padding: 6px 14px;
+      border-radius: 20px;
       background: transparent; border: 1px solid transparent;
       color: var(--text2); font-size: 13px;
       transition: all var(--transition);
+      font-weight: 500;
     }
     .view-btn:hover { 
       background: var(--bg3); 
       color: var(--text);
-      border-color: var(--border);
     }
     .view-btn.active { 
-      background: var(--bg3); 
+      background: var(--accent-light); 
       color: var(--accent);
       border-color: var(--accent);
+      font-weight: 600;
     }
     .topbar-actions { margin-left: auto; display: flex; align-items: center; gap: 10px; }
     .btn {
@@ -331,21 +307,18 @@
       border: 1px solid var(--border);
       background: var(--bg2); color: var(--text);
       transition: all var(--transition);
-      font-family: 'Rajdhani', sans-serif;
     }
     .btn:hover { 
       background: var(--bg3); 
       border-color: var(--accent);
     }
     .btn-primary {
-      background: linear-gradient(135deg, var(--accent) 0%, var(--purple) 100%);
+      background: var(--accent);
       color: white; 
       border-color: transparent;
-      box-shadow: var(--accent-glow);
     }
     .btn-primary:hover { 
-      background: linear-gradient(135deg, var(--accent-hover) 0%, var(--purple) 100%);
-      box-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+      background: var(--accent-hover);
     }
     .avatar {
       width: 30px; height: 30px;
@@ -354,7 +327,6 @@
       font-size: 11px; font-weight: 700; color: white;
       flex-shrink: 0;
       border: 2px solid var(--border);
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     }
 
     /* ─── Content ────────────────────────────────────── */
@@ -376,7 +348,7 @@
       padding: 20px;
       transition: all var(--transition);
     }
-    .stat-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+    .stat-card:hover { border-color: var(--border2); }
     .stat-label { font-size: 12px; color: var(--text2); font-weight: 500; margin-bottom: 8px; }
     .stat-value { font-size: 28px; font-weight: 700; letter-spacing: -1px; }
     .stat-sub { font-size: 12px; color: var(--text3); margin-top: 4px; }
@@ -390,29 +362,57 @@
     
     /* Dashboard new */
     .dashboard-wrapper { flex: 1; overflow-y: auto; padding: 24px; }
-    .dashboard-section { margin-bottom: 32px; }
-    .section-title { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 16px; }
     .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
     .stat-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; text-align: center; }
     .stat-card.stat-overdue .stat-number { color: var(--red); }
     .stat-number { font-size: 32px; font-weight: 700; color: var(--text); }
     .stat-label { font-size: 13px; color: var(--text2); margin-top: 4px; }
-    .members-activity { display: flex; flex-direction: column; gap: 12px; }
-    .member-activity-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; display: flex; align-items: flex-start; gap: 12px; }
-    .member-avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; color: white; flex-shrink: 0; }
-    .member-info { flex: 1; min-width: 0; }
-    .member-name { font-weight: 600; font-size: 14px; color: var(--text); margin-bottom: 4px; }
-    .member-role { font-size: 12px; color: var(--text3); margin-bottom: 8px; }
-    .activity-list { display: flex; flex-direction: column; gap: 6px; }
-    .activity-item { font-size: 13px; color: var(--text2); padding-left: 12px; border-left: 2px solid var(--border); }
-    .activity-item .task-name { color: var(--accent); font-weight: 500; }
-    .activity-item .project-tag { background: var(--bg3); padding: 1px 6px; border-radius: 3px; font-size: 11px; color: var(--text3); }
-    .activity-item .status-badge { padding: 1px 6px; border-radius: 3px; font-size: 11px; font-weight: 500; }
-    .status-done { background: rgba(0, 160, 96, 0.15); color: var(--green); }
-    .status-inprogress { background: rgba(0, 144, 204, 0.15); color: var(--accent); }
-    .status-todo { background: var(--bg3); color: var(--text3); }
-    .status-overdue { background: rgba(221, 34, 85, 0.15); color: var(--red); }
-    .no-activity { color: var(--text3); font-size: 13px; font-style: italic; }
+
+    /* ── Timeline Feed ── */
+    .timeline-feed { display: flex; flex-direction: column; }
+    .timeline-empty { text-align: center; padding: 48px 0; color: var(--text3); font-size: 14px; }
+
+    .timeline-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .timeline-item:last-child { border-bottom: none; }
+
+    .timeline-avatar {
+      width: 32px; height: 32px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 600; font-size: 11px; color: white; flex-shrink: 0;
+    }
+
+    .timeline-body { flex: 1; min-width: 0; }
+
+    .timeline-line {
+      display: flex; align-items: baseline; gap: 6px;
+      font-size: 13px; margin-bottom: 3px;
+    }
+    .timeline-name { font-weight: 600; color: var(--text); }
+    .timeline-action { color: var(--text2); }
+
+    .timeline-detail {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 12px; color: var(--text3);
+    }
+    .timeline-task { color: var(--accent); font-weight: 500; }
+    .timeline-project {
+      border-left: 2px solid var(--border);
+      padding-left: 8px;
+    }
+
+    .timeline-meta {
+      display: flex; align-items: center; gap: 6px;
+      flex-shrink: 0;
+      font-size: 11px; color: var(--text3);
+    }
+    .timeline-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+    }
+    .timeline-time { white-space: nowrap; }
     
     .card {
       background: var(--bg2);
@@ -482,16 +482,15 @@
       height: 3px;
       border-radius: var(--radius) var(--radius) 0 0;
     }
-    .kanban-col:nth-child(1)::before { background: var(--text3); }
-    .kanban-col:nth-child(2)::before { background: var(--accent); box-shadow: var(--accent-glow); }
-    .kanban-col:nth-child(3)::before { background: var(--green); box-shadow: var(--green-glow); }
-    .kanban-col:nth-child(4)::before { background: var(--red); box-shadow: var(--red-glow); }
+    .kanban-col:nth-child(1)::before { background: #9ca3af; }
+    .kanban-col:nth-child(2)::before { background: #6366f1; }
+    .kanban-col:nth-child(3)::before { background: #22c55e; }
+    .kanban-col:nth-child(4)::before { background: #ef4444; }
     
     .kanban-col-header {
       display: flex; align-items: center; gap: 10px;
       padding: 14px 16px;
       font-size: 13px; font-weight: 600;
-      font-family: 'Orbitron', sans-serif;
       letter-spacing: 0.5px;
       text-transform: uppercase;
       border-bottom: 1px solid var(--border);
@@ -499,7 +498,6 @@
     .col-dot { 
       width: 10px; height: 10px; 
       border-radius: 50%; flex-shrink: 0;
-      box-shadow: 0 0 10px currentColor;
     }
     .col-count {
       margin-left: auto;
@@ -529,9 +527,7 @@
       transition: all var(--transition);
     }
     .kanban-card:hover { 
-      box-shadow: var(--shadow-md);
       border-color: var(--accent);
-      transform: translateY(-2px);
     }
     .kanban-card:active { cursor: grabbing; }
     .card-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
@@ -568,35 +564,50 @@
 
     /* ─── Task List ──────────────────────────────────── */
     .list-toolbar {
-      display: flex; align-items: center; gap: 10px;
+      display: flex; align-items: flex-end; gap: 12px;
       padding: 16px 24px;
       border-bottom: 1px solid var(--border);
       flex-shrink: 0;
+      flex-wrap: wrap;
     }
-    .search-input {
-      display: flex; align-items: center; gap: 8px;
-      background: var(--bg3);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
+    .filter-group {
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .filter-label {
+      font-size: 11px; font-weight: 500; color: var(--text3);
+      text-transform: uppercase; letter-spacing: .5px;
+    }
+    .filter-select {
       padding: 6px 10px;
-    }
-    .search-input input {
-      background: transparent; border: none; outline: none;
-      color: var(--text); font-size: 13px; width: 200px;
-    }
-    .search-input input::placeholder { color: var(--text3); }
-    .filter-chip {
-      display: flex; align-items: center; gap: 5px;
-      padding: 5px 10px;
-      background: var(--bg3);
       border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      font-size: 12px; color: var(--text2);
+      border-radius: 6px;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 13px;
+      min-width: 130px;
       cursor: pointer;
-      transition: all var(--transition);
+      outline: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23999'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      padding-right: 28px;
     }
-    .filter-chip:hover { border-color: var(--border2); color: var(--text); }
-    .filter-chip.active { border-color: var(--accent); background: var(--accent-light); color: var(--accent); }
+    .filter-select:hover { border-color: var(--border2); }
+    .filter-select:focus { border-color: var(--accent); }
+    .filter-clear-btn {
+      padding: 6px 12px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      background: none;
+      color: var(--text3);
+      font-size: 12px; font-weight: 500;
+      cursor: pointer;
+      margin-left: auto;
+      white-space: nowrap;
+      transition: color .15s, border-color .15s;
+    }
+    .filter-clear-btn:hover { color: var(--text); border-color: var(--border); }
 
     .task-table { width: 100%; border-collapse: collapse; }
     .task-table th {
@@ -632,15 +643,26 @@
     .task-name-text { font-weight: 500; }
     .task-name-text.done { text-decoration: line-through; color: var(--text3); }
     .status-pill {
-      display: inline-flex; align-items: center; gap: 5px;
-      padding: 3px 9px; border-radius: 20px;
-      font-size: 11px; font-weight: 500;
-    }
-    .status-dot { width: 6px; height: 6px; border-radius: 50%; }
-    .priority-badge {
       display: inline-flex; align-items: center; gap: 4px;
+      padding: 2px 10px; border-radius: 20px;
       font-size: 11px; font-weight: 500;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: opacity .15s, transform .15s;
+      border: 1px solid transparent;
     }
+    .status-pill:hover { opacity: .85; transform: scale(1.03); }
+    .status-dot { width: 5px; height: 5px; border-radius: 50%; }
+    .priority-pill {
+      display: inline-flex; align-items: center; gap: 3px;
+      padding: 2px 10px; border-radius: 20px;
+      font-size: 11px; font-weight: 500;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: opacity .15s, transform .15s;
+      border: 1px solid transparent;
+    }
+    .priority-pill:hover { opacity: .85; transform: scale(1.03); }
 
     /* ─── Gating Tracking ──────────────────────────── */
     .gating-track-wrapper { 
@@ -656,7 +678,6 @@
       border: 1px solid var(--border);
       border-radius: var(--radius);
       overflow: hidden;
-      box-shadow: var(--shadow);
     }
     .gating-table {
       width: 100%;
@@ -664,12 +685,12 @@
       font-size: 13px;
     }
     .gating-table th {
-      background: linear-gradient(180deg, var(--bg3) 0%, var(--bg2) 100%);
+      background: var(--bg3);
       padding: 14px 12px;
       text-align: left;
       font-weight: 600;
       font-size: 11px;
-      color: var(--accent);
+      color: var(--text);
       letter-spacing: .05em;
       border-bottom: 2px solid var(--accent);
       position: sticky; top: 0; z-index: 1;
@@ -677,7 +698,6 @@
       word-break: break-word;
       max-width: 130px;
       vertical-align: top;
-      font-family: 'Orbitron', sans-serif;
     }
     .gating-table th:first-child {
       padding-left: 18px;
@@ -701,7 +721,6 @@
       width: 12px; height: 12px;
       border-radius: 50%;
       flex-shrink: 0;
-      box-shadow: 0 0 10px currentColor;
     }
     .gt-proj-name {
       font-weight: 600;
@@ -759,7 +778,6 @@
     }
     .gt-ms-check:hover {
       transform: scale(1.15);
-      box-shadow: var(--green-glow);
       border-color: var(--green);
     }
     .gt-ms-date {
@@ -781,7 +799,6 @@
       font-size: 16px;
       font-weight: 700;
       color: var(--text3);
-      font-family: 'Orbitron', sans-serif;
     }
     .gt-ms-date:hover .gt-ms-day { color: var(--text2); }
     .gt-ms-date .gt-ms-label {
@@ -800,7 +817,6 @@
       color: var(--text3);
       margin-bottom: 6px;
       font-weight: 600;
-      font-family: 'Orbitron', sans-serif;
     }
     .gt-progress-bar-sm {
       height: 6px;
@@ -813,68 +829,49 @@
     .gt-progress-bar-sm .gt-progress-fill {
       height: 100%;
       border-radius: 3px;
-      background: linear-gradient(90deg, var(--green), var(--accent));
+      background: var(--accent);
       transition: width .4s ease;
-      box-shadow: var(--green-glow);
     }
     .gt-progress-pct {
       font-size: 12px;
       font-weight: 700;
       color: var(--accent);
-      font-family: 'Orbitron', sans-serif;
     }
+
+    /* Gating drag handle */
+    .gt-drag-handle {
+      width: 28px; text-align: center;
+      color: var(--text3); font-size: 16px; font-weight: 700;
+      cursor: grab; user-select: none;
+      letter-spacing: -2px;
+      transition: color .12s;
+      padding: 0 2px;
+    }
+    .gt-drag-handle-th { width: 28px; padding: 0; }
+    .gating-table tbody tr { cursor: default; }
+    .gating-table tbody tr.dragging {
+      opacity: 0.35;
+    }
+    .gating-table tbody tr.drag-over {
+      outline: 2px dashed var(--accent);
+      outline-offset: -2px;
+    }
+    .gt-drag-handle:hover { color: var(--text); }
 
     .gating-toolbar {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 10px;
       margin-bottom: 18px;
       padding-bottom: 18px;
       border-bottom: 1px solid var(--border);
     }
-    .gating-filter-chips {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-    .gating-filter-chip {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 14px;
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      font-size: 12px;
-      color: var(--text2);
-      cursor: pointer;
-      transition: all var(--transition);
-      font-weight: 500;
-    }
-    .gating-filter-chip:hover {
-      border-color: var(--border2);
-      color: var(--text);
-    }
-    .gating-filter-chip.active {
-      background: var(--accent-light);
-      border-color: var(--accent);
-      color: var(--accent);
-      font-weight: 500;
-    }
-    .gating-filter-chip.all.active {
-      background: var(--bg3);
-      border-color: var(--border2);
-      color: var(--text);
-    }
-
     .vertical-badge {
       display: inline-block;
-      padding: 2px 8px;
-      border-radius: 4px;
+      padding: 2px 10px;
+      border-radius: 20px;
       font-size: 11px;
       font-weight: 500;
-      background: var(--bg3);
-      color: var(--text2);
     }
 
     /* ─── Members ────────────────────────────────────── */
@@ -892,15 +889,15 @@
       display: flex; flex-direction: column; gap: 14px;
       transition: all var(--transition);
     }
-    .member-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+    .member-card:hover { border-color: var(--accent); cursor: pointer; }
     .member-top { display: flex; align-items: center; gap: 12px; }
     .member-avatar { width: 42px; height: 42px; border-radius: 50%; font-size: 16px; font-weight: 600; }
     .member-info { flex: 1; }
     .member-name { font-weight: 600; font-size: 14px; }
     .member-role-badge {
       display: inline-block;
-      padding: 2px 8px; border-radius: 4px;
-      font-size: 11px; font-weight: 600;
+      padding: 2px 10px; border-radius: 12px;
+      font-size: 11px; font-weight: 500;
       margin-top: 3px;
     }
     .member-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
@@ -954,7 +951,6 @@
       padding: 28px;
       width: 480px;
       max-width: 95vw;
-      box-shadow: var(--shadow-lg);
       animation: modal-in .2s ease;
     }
     @keyframes modal-in {
@@ -1008,7 +1004,7 @@
       transition: border-color var(--transition);
     }
     .multi-select-display:hover { border-color: var(--border2); }
-    .multi-select-display.open { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-light); }
+    .multi-select-display.open { border-color: var(--accent); }
     .multi-select-placeholder {
       font-size: 12px; color: var(--text3);
       display: flex; align-items: center; padding: 2px 4px;
@@ -1033,7 +1029,6 @@
       background: var(--bg2);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      box-shadow: var(--shadow-lg);
       z-index: 200;
       display: none;
       max-height: 220px; overflow-y: auto;
@@ -1082,13 +1077,82 @@
       padding: 10px 16px;
       border-radius: var(--radius);
       font-size: 13px; font-weight: 500;
-      box-shadow: var(--shadow-lg);
       animation: toast-in .25s ease;
       max-width: 280px;
     }
     @keyframes toast-in {
       from { opacity: 0; transform: translateX(20px); }
       to { opacity: 1; transform: none; }
+    }
+
+    /* ─── Confirm Dialog ────────────────────────────── */
+    .confirm-overlay {
+      position: fixed; inset: 0; z-index: 10000;
+      background: rgba(0,0,0,.4);
+      backdrop-filter: blur(6px);
+      display: flex; align-items: center; justify-content: center;
+      animation: confirm-fade-in .2s ease;
+    }
+    @keyframes confirm-fade-in {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    .confirm-dialog {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px 32px 24px;
+      max-width: 400px; width: 90vw;
+      animation: confirm-scale-in .25s cubic-bezier(.16,1,.3,1);
+    }
+    @keyframes confirm-scale-in {
+      from { opacity: 0; transform: scale(.92) translateY(8px); }
+      to   { opacity: 1; transform: none; }
+    }
+    .confirm-icon {
+      width: 44px; height: 44px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; margin-bottom: 16px;
+    }
+    .confirm-icon.danger {
+      background: rgba(220, 38, 38, 0.1);
+    }
+    .confirm-title {
+      font-size: 18px; font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .confirm-message {
+      font-size: 13px;
+      color: var(--text2);
+      line-height: 1.5;
+      margin-bottom: 24px;
+    }
+    .confirm-actions {
+      display: flex; gap: 10px; justify-content: flex-end;
+    }
+    .confirm-btn {
+      font-size: 13px; font-weight: 600;
+      padding: 8px 20px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all .15s;
+      background: transparent;
+      color: var(--text2);
+      letter-spacing: .3px;
+    }
+    .confirm-btn:hover {
+      border-color: var(--text3);
+      color: var(--text);
+    }
+    .confirm-btn.confirm-danger {
+      background: var(--red);
+      border-color: var(--red);
+      color: #fff;
+    }
+    .confirm-btn.confirm-danger:hover {
+      filter: brightness(1.1);
     }
 
     /* ─── Drag placeholder ─────────────────────────── */
@@ -1106,8 +1170,8 @@
     /* ─── Project Category Badge ──────────────────────── */
     .category-badge {
       display: inline-block;
-      padding: 1px 5px; border-radius: 3px;
-      font-size: 10px; font-weight: 600;
+      padding: 2px 10px; border-radius: 12px;
+      font-size: 11px; font-weight: 500;
       margin-left: 4px; vertical-align: middle;
     }
     .category-gating   { background: var(--orange-light); color: var(--orange); }
@@ -1179,7 +1243,6 @@
       border-color: var(--accent);
       background: var(--bg2);
       color: var(--text);
-      box-shadow: 0 0 0 2px var(--accent-light);
     }
     .inline-select.status-select {
       font-size: 11px; font-weight: 500;
@@ -1240,6 +1303,17 @@
     .task-note-input::placeholder {
       color: var(--text3);
     }
+    .task-del {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 22px; height: 22px;
+      border-radius: 4px;
+      font-size: 16px; font-weight: 700;
+      color: var(--text3); cursor: pointer;
+      transition: all .15s;
+      opacity: 0;
+    }
+    tr:hover .task-del { opacity: 1; }
+    .task-del:hover { background: var(--red); color: white !important; }
 
     /* ─── Kanban: Project Card (new design) ────────────── */
     .proj-card {
@@ -1251,8 +1325,35 @@
       transition: all var(--transition);
       position: relative;
     }
-    .proj-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+    .proj-card:hover { border-color: var(--accent); }
     .proj-card:active { cursor: grabbing; }
+    .proj-card.dragging { opacity: 0.4; cursor: grabbing; }
+    .proj-card.drop-before {
+      border-top: 2px solid var(--accent);
+    }
+    .proj-card-drag-handle {
+      position: absolute;
+      top: 4px; right: 6px;
+      width: 20px; height: 20px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text3); font-size: 14px; font-weight: 700;
+      cursor: grab; user-select: none;
+      letter-spacing: -3px;
+      border-radius: 4px;
+      transition: color .12s, background .12s;
+      z-index: 2;
+    }
+    .proj-card-drag-handle:hover {
+      color: var(--text);
+      background: var(--bg3);
+    }
+    .proj-card.dragging .proj-card-drag-handle { cursor: grabbing; }
+    .kanban-cards.drag-over {
+      background: rgba(99, 102, 241, 0.08);
+      border-radius: 8px;
+      outline: 2px dashed var(--accent);
+      outline-offset: -2px;
+    }
     .proj-card-header {
       display: flex; align-items: center; gap: 6px;
       margin-bottom: 10px;
@@ -1264,8 +1365,27 @@
     }
     .proj-card-tasks {
       display: flex; flex-direction: column; gap: 4px;
-      margin-bottom: 10px;
+      margin-bottom: 6px;
     }
+    .proj-card-add-row {
+      display: flex; align-items: center; gap: 5px;
+      padding: 5px 0; margin-bottom: 8px;
+      border-radius: 6px;
+      color: var(--text3); font-size: 12px;
+      cursor: pointer;
+      transition: color .15s;
+    }
+    .proj-card-add-row:hover { color: var(--accent); }
+    .proj-card-add-icon {
+      width: 16px; height: 16px;
+      display: flex; align-items: center; justify-content: center;
+      border: 1px dashed var(--border2);
+      border-radius: 4px;
+      font-size: 11px; font-weight: 600;
+      transition: border-color .15s;
+    }
+    .proj-card-add-row:hover .proj-card-add-icon { border-color: var(--accent); }
+    .proj-card-add-label { font-weight: 500; }
     .proj-task-row {
       display: flex; align-items: center; gap: 6px;
       font-size: 12px; color: var(--text2);
@@ -1318,21 +1438,21 @@
 
   <div class="sidebar-section">
     <div class="sidebar-section-label">WORKSPACE</div>
-    <div class="nav-item" onclick="navigate('dashboard', this)">
-      <span class="nav-icon">⊞</span>Overview
+    <div class="nav-item" onclick="navigate('kanban', this)">
+      <span class="nav-icon">⊞</span>Project Overview
+    </div>
+    <div class="nav-item" onclick="navigate('gating', this)">
+      <span class="nav-icon">📊</span>Gating Tracking
     </div>
     <div class="nav-item" onclick="navigate('list', this)">
       <span class="nav-icon">≡</span>Task List
       <span class="nav-badge" id="badge-tasks">0</span>
     </div>
-    <div class="nav-item" onclick="navigate('gating', this)">
-      <span class="nav-icon">📊</span>Gating Tracking
-    </div>
-    <div class="nav-item" onclick="navigate('kanban', this)">
-      <span class="nav-icon">⊞</span>Status Overview
-    </div>
     <div class="nav-item" onclick="navigate('members', this)">
-      <span class="nav-icon">◉</span>Members
+      <span class="nav-icon">◉</span>Members Overview
+    </div>
+    <div class="nav-item" onclick="navigate('dashboard', this)">
+      <span class="nav-icon">⊞</span>Team Activity
     </div>
   </div>
 
@@ -1360,10 +1480,10 @@
 <div class="main">
   <!-- Top Bar -->
   <div class="topbar">
-    <span class="topbar-title" id="page-title">Status Overview</span>
+    <span class="topbar-title" id="page-title">Team Activity</span>
     <div class="topbar-views" id="topbar-views"></div>
     <div class="topbar-actions">
-      <button class="btn btn-primary" onclick="openModal()">
+      <button class="btn btn-primary" id="topbar-new-task-btn" onclick="openModal(currentProjectFilter || null)">
         + New Task
       </button>
       <div class="avatar" style="background:#2f6fef" title="Admin">A</div>
@@ -1377,34 +1497,7 @@
     <!-- ── DASHBOARD ─────────────────────────────── -->
     <div class="page active" id="page-dashboard">
       <div class="dashboard-wrapper">
-        <!-- Project Stats -->
-        <div class="dashboard-section">
-          <h3 class="section-title">Projects Overview</h3>
-          <div class="stats-row">
-            <div class="stat-card">
-              <div class="stat-number" id="stat-total">0</div>
-              <div class="stat-label">Total</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-number" id="stat-inprogress">0</div>
-              <div class="stat-label">In Progress</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-number" id="stat-done">0</div>
-              <div class="stat-label">Done</div>
-            </div>
-            <div class="stat-card stat-overdue">
-              <div class="stat-number" id="stat-overdue">0</div>
-              <div class="stat-label">Overdue</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Members Activity -->
-        <div class="dashboard-section">
-          <h3 class="section-title">Team Activity</h3>
-          <div class="members-activity" id="members-activity"></div>
-        </div>
+        <div class="timeline-feed" id="timeline-feed"></div>
       </div>
     </div>
 
@@ -1418,22 +1511,29 @@
     <!-- ── TASK LIST ──────────────────────────── -->
     <div class="page" id="page-list">
       <div class="list-toolbar">
-        <div class="search-input">
-          <span style="color:var(--text3)">🔍</span>
-          <input type="text" placeholder="Search tasks..." oninput="filterTasks(this.value)" />
-        </div>
-        <div class="filter-chip active" onclick="filterStatus('all', this)">All</div>
-        <div class="filter-chip" onclick="filterStatus('todo', this)">To Do</div>
-        <div class="filter-chip" onclick="filterStatus('inprogress', this)">In Progress</div>
-        <div class="filter-chip" onclick="filterStatus('done', this)">Done</div>
-        <div class="filter-chip" onclick="filterStatus('overdue', this)">Overdue</div>
-        <div style="margin-left:auto; display:flex; gap:8px">
-          <select class="form-select" style="width:auto;padding:5px 10px;font-size:12px">
-            <option>Priority ↕</option>
-            <option>High → Low</option>
-            <option>Low → High</option>
+        <div class="filter-group">
+          <label class="filter-label">Project</label>
+          <select class="filter-select" id="filter-project" onchange="applyFilters()">
+            <option value="">All</option>
           </select>
         </div>
+        <div class="filter-group">
+          <label class="filter-label">Assignee</label>
+          <select class="filter-select" id="filter-assignee" onchange="applyFilters()">
+            <option value="">All</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label class="filter-label">Status</label>
+          <select class="filter-select" id="filter-status" onchange="applyFilters()">
+            <option value="">All</option>
+            <option value="todo">To Do</option>
+            <option value="inprogress">In Progress</option>
+            <option value="done">Done</option>
+            <option value="overdue">Overdue</option>
+          </select>
+        </div>
+        <button class="filter-clear-btn" onclick="clearFilters()" title="Clear all filters">× Clear</button>
       </div>
       <div style="flex:1;overflow-y:auto;padding:0 24px 24px">
         <table class="task-table" id="task-table">
@@ -1443,11 +1543,11 @@
               <th>Task Name</th>
               <th>Project</th>
               <th>Assignee</th>
-              <th>Priority</th>
               <th>Status</th>
               <th>Due Date</th>
               <th>Completed</th>
               <th>Notes</th>
+              <th style="width:20px"></th>
             </tr>
           </thead>
           <tbody id="task-tbody"></tbody>
@@ -1459,8 +1559,18 @@
     <div class="page" id="page-gating">
       <div class="gating-track-wrapper">
         <div class="gating-toolbar">
-          <div style="font-size:13px;color:var(--text2);font-weight:500">Vertical Filter:</div>
-          <div class="gating-filter-chips" id="gating-vertical-filters"></div>
+          <div style="font-size:13px;color:var(--text2);font-weight:500;white-space:nowrap">Project:</div>
+          <select class="filter-select" id="gating-project-filter" onchange="onGatingFilterChange()">
+            <option value="">All</option>
+          </select>
+          <div style="font-size:13px;color:var(--text2);font-weight:500;white-space:nowrap">Lead:</div>
+          <select class="filter-select" id="gating-lead-filter" onchange="onGatingFilterChange()">
+            <option value="">All</option>
+          </select>
+          <div style="font-size:13px;color:var(--text2);font-weight:500;white-space:nowrap">Vertical:</div>
+          <select class="filter-select" id="gating-vertical-filter" onchange="onGatingFilterChange()">
+            <option value="">All</option>
+          </select>
         </div>
         <div class="gating-track-table-wrap" id="gating-table-wrap">
           <!-- Rendered by JS -->
@@ -1502,13 +1612,13 @@
       <div class="form-group">
         <label class="form-label">Assignee</label>
         <select class="form-select" id="task-member-select">
-          <option>Lorie Yu</option>
-          <option>Yuki Liang</option>
           <option>Doris PAN</option>
           <option>Edelene</option>
-          <option>Wing Chen</option>
-          <option>Jaycee Pan</option>
           <option>Hailey Liang</option>
+          <option>Jaycee Pan</option>
+          <option>Lorie Yu</option>
+          <option>Wing Chen</option>
+          <option>Yuki Liang</option>
         </select>
       </div>
     </div>
@@ -1516,20 +1626,20 @@
       <div class="form-group">
         <label class="form-label">Priority</label>
         <select class="form-select" id="task-priority">
-          <option value="high">🔴 High</option>
-          <option value="medium" selected>🟡 Medium</option>
-          <option value="low">🟢 Low</option>
+          <option value="high">▲ High</option>
+          <option value="medium" selected>■ Medium</option>
+          <option value="low">◆ Low</option>
         </select>
       </div>
     </div>
     <div class="form-row">
       <div class="form-group">
         <label class="form-label">Start Date</label>
-        <input type="date" class="form-input" id="task-start" />
+        <input type="text" class="form-input" id="task-start" placeholder="yyyy-mm-dd" onmousedown="if(this.type==='text')this.type='date'" />
       </div>
       <div class="form-group">
         <label class="form-label">Due Date</label>
-        <input type="date" class="form-input" id="task-due" />
+        <input type="text" class="form-input" id="task-due" placeholder="yyyy-mm-dd" onmousedown="if(this.type==='text')this.type='date'" />
       </div>
     </div>
     <div class="form-group">
@@ -1551,7 +1661,7 @@
 ══════════════════════════════════════════════════ -->
 <div class="modal-overlay" id="project-modal-overlay" onclick="closeNewProjectModal(event)">
   <div class="modal" style="width:460px;max-height:90vh;overflow-y:auto">
-    <div class="modal-title">New Project</div>
+    <div class="modal-title" id="project-modal-title">New Project</div>
     <div class="form-group">
       <label class="form-label">Project Name *</label>
       <input type="text" class="form-input" id="proj-name-input" placeholder="Enter project name..." />
@@ -1580,20 +1690,20 @@
       <div class="form-group">
         <label class="form-label">Priority <span style="color:var(--red)">*</span></label>
         <select class="form-select" id="proj-priority-select">
-          <option value="high">🔴 High</option>
-          <option value="medium" selected>🟡 Medium</option>
-          <option value="low">🟢 Low</option>
+          <option value="high">▲ High</option>
+          <option value="medium" selected>■ Medium</option>
+          <option value="low">◆ Low</option>
         </select>
       </div>
     </div>
     <div class="form-row">
       <div class="form-group">
         <label class="form-label">Start Date <span style="color:var(--red)">*</span></label>
-        <input type="date" class="form-input" id="proj-start-date" />
+        <input type="text" class="form-input" id="proj-start-date" placeholder="yyyy-mm-dd" onmousedown="if(this.type==='text')this.type='date'" />
       </div>
       <div class="form-group">
         <label class="form-label">Due Date <span style="color:var(--red)">*</span></label>
-        <input type="date" class="form-input" id="proj-due-date" />
+        <input type="text" class="form-input" id="proj-due-date" placeholder="yyyy-mm-dd" onmousedown="if(this.type==='text')this.type='date'" />
       </div>
     </div>
     <div class="form-group">
@@ -1626,7 +1736,7 @@
 
     <div class="modal-footer">
       <button class="btn" onclick="closeNewProjectModal()">Cancel</button>
-      <button class="btn btn-primary" onclick="createProject()">Create Project</button>
+      <button class="btn btn-primary" id="project-save-btn" onclick="saveProject()">Create Project</button>
     </div>
   </div>
 </div>
@@ -1642,17 +1752,51 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ── Data ──────────────────────────────────────────────
 const members = [
-  { id:1, name:'Lorie Yu',     role:'Product',   color:'#2f6fef', tags:['Design','Strategy'] },
-  { id:2, name:'Yuki Liang',   role:'Product',   color:'#38a169', tags:['Backend','API'] },
-  { id:3, name:'Doris PAN',    role:'Lead',      color:'#805ad5', tags:['Frontend','Vue'] },
-  { id:4, name:'Edelene',      role:'Product',   color:'#dd6b20', tags:['UI','Prototype'] },
-  { id:5, name:'Wing Chen',    role:'Data',      color:'#d69e2e', tags:['Backend','DB'] },
-  { id:6, name:'Jaycee Pan',   role:'Data',      color:'#319795', tags:['Testing','QA'] },
-  { id:7, name:'Hailey Liang', role:'Product',   color:'#d53f8c', tags:['Support','Docs'] },
+  { id:1, name:'Doris PAN',    role:'Lead',      color:'#8270da', tags:['Frontend','Vue'] },
+  { id:2, name:'Edelene',      role:'Product',   color:'#c47d42', tags:['UI','Prototype'] },
+  { id:3, name:'Hailey Liang', role:'Product',   color:'#c4678c', tags:['Support','Docs'] },
+  { id:4, name:'Jaycee Pan',   role:'Data',      color:'#5a9e9c', tags:['Testing','QA'] },
+  { id:5, name:'Lorie Yu',     role:'Product',   color:'#5a8dee', tags:['Design','Strategy'] },
+  { id:6, name:'Wing Chen',    role:'Data',      color:'#c49a3e', tags:['Backend','DB'] },
+  { id:7, name:'Yuki Liang',   role:'Product',   color:'#5aad7a', tags:['Backend','API'] },
 ];
 
 let projects = [];
 let tasks = [];
+let activityLog = [];
+
+// ── Activity Log Persistence ──────────────────────
+function loadActivityLog() {
+  try {
+    const raw = localStorage.getItem('teamflow_activity_log');
+    if (raw) activityLog = JSON.parse(raw);
+  } catch (e) { activityLog = []; }
+}
+function saveActivityLog() {
+  try {
+    localStorage.setItem('teamflow_activity_log', JSON.stringify(activityLog.slice(0, 200)));
+  } catch (e) {}
+}
+
+function recordActivity(actionType, taskName, assignee, project, detail) {
+  const mem = members.find(m => m.name === assignee);
+  const proj = projects.find(p => p.name === project);
+  const initial = (assignee || '??').split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+  const entry = {
+    id: Date.now() + '-' + Math.random().toString(36).slice(2, 8),
+    timestamp: Date.now(),
+    actionType,
+    taskName,
+    assignee,
+    project,
+    detail,
+    memberInitial: initial,
+    memberColor: memberColors[assignee] || '#999',
+    projColor: proj ? proj.color : '#999',
+  };
+  activityLog.unshift(entry);
+  saveActivityLog();
+}
 
 const PALETTE = [
   '#2f6fef','#38a169','#805ad5','#dd6b20','#d69e2e',
@@ -1733,6 +1877,7 @@ async function loadAll() {
     if (tErr) throw tErr;
     projects = (pRows || []).map(rowToProject);
     tasks    = (tRows || []).map(rowToTask);
+    loadActivityLog();
   } catch(e) {
     showToast('Failed to load data: ' + e.message, true);
   } finally {
@@ -1741,18 +1886,25 @@ async function loadAll() {
 }
 
 const statusConfig = {
-  todo:       { label:'To Do',       color:'var(--text3)',   dot:'#9b9a96' },
-  inprogress: { label:'In Progress', color:'var(--accent)',  dot:'#2f6fef' },
-  done:       { label:'Done',        color:'var(--green)',   dot:'#38a169' },
-  overdue:    { label:'Overdue',     color:'var(--red)',     dot:'#e53e3e' },
+  todo:       { label:'To Do',       color:'#6b7280', bg:'#e5e7eb', dot:'#9ca3af' },
+  inprogress: { label:'In Progress', color:'#4f46e5', bg:'#e0e7ff', dot:'#6366f1' },
+  done:       { label:'Done',        color:'#16a34a', bg:'#dcfce7', dot:'#22c55e' },
+  overdue:    { label:'Overdue',     color:'#dc2626', bg:'#fee2e2', dot:'#ef4444' },
 };
 const priorityConfig = {
-  high:   { label:'High',   color:'var(--red)',    icon:'🔴' },
-  medium: { label:'Medium', color:'var(--yellow)', icon:'🟡' },
-  low:    { label:'Low',    color:'var(--green)',  icon:'🟢' },
+  high:   { label:'High',   color:'#dc2626', bg:'#fee2e2', icon:'▲' },
+  medium: { label:'Medium', color:'#d97706', bg:'#fef3c7', icon:'■' },
+  low:    { label:'Low',    color:'#6b7280', bg:'#e5e7eb', icon:'◆' },
+};
+const verticalConfig = {
+  Pet:      { color: '#d97706', bg: '#fef3c7' },
+  Beauty:   { color: '#db2777', bg: '#fce7f3' },
+  Babycare: { color: '#7c3aed', bg: '#ede9fe' },
+  Homecare: { color: '#059669', bg: '#d1fae5' },
+  Others:   { color: '#6b7280', bg: '#e5e7eb' },
 };
 const memberColors = {
-  'Lorie Yu':'#2f6fef','Yuki Liang':'#38a169','Doris PAN':'#805ad5','Edelene':'#dd6b20','Wing Chen':'#d69e2e','Jaycee Pan':'#319795','Hailey Liang':'#d53f8c'
+  'Lorie Yu':'#5a8dee','Yuki Liang':'#5aad7a','Doris PAN':'#8270da','Edelene':'#c47d42','Wing Chen':'#c49a3e','Jaycee Pan':'#5a9e9c','Hailey Liang':'#c4678c'
 };
 
 // ── Sidebar Projects ─────────────────────────────────
@@ -1787,7 +1939,8 @@ function renderSidebarProjects() {
         ${p.name}
         <span class="category-badge ${catClass}">${catLabel}</span>
       </span>
-      <span class="project-del" onclick="deleteProject(event,${p.id})" title="Delete project">×</span>
+      <span class="project-edit" onclick="event.stopPropagation();editProject(${p.id})" title="Edit project">✏️</span>
+      <span class="project-del" onclick="event.stopPropagation();deleteProject(${p.id})" title="Delete project">×</span>
     </div>
   `}).join('');
 }
@@ -1802,10 +1955,16 @@ function filterByProject(name) {
   document.getElementById('page-list').classList.add('active');
   document.getElementById('page-title').textContent = name;
   document.getElementById('topbar-views').innerHTML = '';
-  // Filter by project
-  const input = document.querySelector('.search-input input');
-  if (input) input.value = name;
-  filterTasks(name);
+  // Restore + New Task button for Task List
+  const newTaskBtn = document.getElementById('topbar-new-task-btn');
+  if (newTaskBtn) newTaskBtn.style.display = '';
+  // Populate dropdowns and set filter
+  populateFilterDropdowns();
+  const projSel = document.getElementById('filter-project');
+  if (projSel) projSel.value = name;
+  document.getElementById('filter-assignee').value = '';
+  document.getElementById('filter-status').value = '';
+  applyFilters();
   // Highlight the project in sidebar after render
   setTimeout(() => {
     const projItems = document.querySelectorAll('.project-item');
@@ -1817,23 +1976,104 @@ function filterByProject(name) {
   }, 50);
 }
 
-async function deleteProject(e, id) {
-  e.stopPropagation();
-  const p = projects.find(p => p.id === id);
-  if (!p) return;
-  const hasTasks = tasks.some(t => t.project === p.name);
-  if (hasTasks) {
-    showToast(`Cannot delete "${p.name}" — it has tasks`, true);
-    return;
+function filterByMember(name) {
+  // Navigate to task list and filter by assignee
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  // Highlight Task List nav
+  const listNav = document.querySelector('.nav-item[onclick*="list"]');
+  if (listNav) listNav.classList.add('active');
+  // Manual page switch
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-list').classList.add('active');
+  document.getElementById('page-title').textContent = name;
+  document.getElementById('topbar-views').innerHTML = '';
+  // Restore + New Task button for Task List
+  const newTaskBtn = document.getElementById('topbar-new-task-btn');
+  if (newTaskBtn) newTaskBtn.style.display = '';
+  // Populate dropdowns and set filter
+  populateFilterDropdowns();
+  document.getElementById('filter-project').value = '';
+  const assigneeSel = document.getElementById('filter-assignee');
+  if (assigneeSel) {
+    // Make sure the assignee option exists
+    if (!assigneeSel.querySelector(`option[value="${name}"]`)) {
+      const opt = document.createElement('option');
+      opt.value = name;
+      opt.textContent = name;
+      assigneeSel.appendChild(opt);
+    }
+    assigneeSel.value = name;
   }
+  document.getElementById('filter-status').value = '';
+  currentProjectFilter = null;
+  applyFilters();
+}
+
+// ── Custom Confirm Dialog ─────────────────────────────
+function showConfirm({ title = 'Confirm', message, icon = '⚠️', confirmLabel = 'Delete', danger = true } = {}) {
+  return new Promise(resolve => {
+    const overlay = document.createElement('div');
+    overlay.className = 'confirm-overlay';
+    overlay.innerHTML = `
+      <div class="confirm-dialog">
+        <div class="confirm-icon ${danger ? 'danger' : ''}">${icon}</div>
+        <div class="confirm-title">${title}</div>
+        <div class="confirm-message">${message}</div>
+        <div class="confirm-actions">
+          <button class="confirm-btn" id="confirm-cancel">Cancel</button>
+          <button class="confirm-btn ${danger ? 'confirm-danger' : ''}" id="confirm-ok">${confirmLabel}</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+
+    const close = (val) => { overlay.remove(); resolve(val); };
+    overlay.querySelector('#confirm-cancel').onclick = () => close(false);
+    overlay.querySelector('#confirm-ok').onclick = () => close(true);
+    overlay.addEventListener('click', e => { if (e.target === overlay) close(false); });
+    // Focus the confirm button
+    setTimeout(() => overlay.querySelector('#confirm-ok').focus(), 50);
+  });
+}
+
+async function deleteProject(id) {
+  const numId = Number(id);
+  const p = projects.find(p => Number(p.id) === numId);
+  if (!p) return;
+  const projectTaskCount = tasks.filter(t => t.project === p.name).length;
+  const confirmed = await showConfirm({
+    title: 'Delete Project',
+    message: projectTaskCount > 0
+      ? `This will permanently delete <strong>${p.name}</strong> and its <strong>${projectTaskCount} task(s)</strong>. This action cannot be undone.`
+      : `This will permanently delete <strong>${p.name}</strong>. This action cannot be undone.`,
+    icon: '🗑️',
+    confirmLabel: 'Delete',
+    danger: true,
+  });
+  if (!confirmed) return;
+
   showLoading('Deleting...');
-  const { error } = await sb.from('projects').delete().eq('id', id);
+  // Delete all tasks belonging to this project first
+  if (projectTaskCount > 0) {
+    await sb.from('tasks').delete().eq('project', p.name);
+    tasks = tasks.filter(t => t.project !== p.name);
+  }
+  const { error } = await sb.from('projects').delete().eq('id', numId);
   hideLoading();
   if (error) { showToast('Delete failed: ' + error.message, true); return; }
-  projects = projects.filter(p => p.id !== id);
-  renderSidebarProjects();
-  renderDashboardProjects();
+  const deletedName = p.name, deletedLead = (p.lead || '').split(',')[0].trim() || 'System';
+  recordActivity('project-deleted', deletedName, deletedLead, deletedName, `deleted project "${deletedName}"`);
+  projects = projects.filter(p => Number(p.id) !== numId);
   showToast(`Project "${p.name}" deleted`);
+  requestAnimationFrame(() => {
+    renderSidebarProjects();
+    switch (currentPage) {
+      case 'kanban':   renderKanban(); break;
+      case 'dashboard': renderDashboardProjects(); break;
+      case 'gating':    renderGating(); break;
+      default: break;
+    }
+  });
 }
 
 // ── Gating Template Tasks (8 milestones) ───────────────────────
@@ -1849,7 +2089,17 @@ const GATING_TASKS = [
 ];
 
 // ── New Project Modal ─────────────────────────────────
+function resetDateInputs() {
+  document.querySelectorAll('input[placeholder="yyyy-mm-dd"]').forEach(el => {
+    if (el.type === 'date') el.type = 'text';
+  });
+}
+
 function openNewProjectModal() {
+  resetDateInputs();
+  editingProjectId = null;
+  document.getElementById('project-modal-title').textContent = 'New Project';
+  document.getElementById('project-save-btn').textContent = 'Create Project';
   document.getElementById('proj-name-input').value = '';
   document.getElementById('proj-desc-input').value = '';
   document.getElementById('proj-category-select').value = 'Gating';
@@ -1882,7 +2132,7 @@ function renderLeadDropdown() {
   const dropdown = document.getElementById('lead-select-dropdown');
 
   // Render dropdown options
-  dropdown.innerHTML = members.map(m => {
+  dropdown.innerHTML = [...members].sort((a,b) => a.name.localeCompare(b.name)).map(m => {
     const isSelected = selectedLeads.includes(m.name);
     return `
       <div class="multi-select-option ${isSelected ? 'selected' : ''}" onclick="toggleLeadOption('${m.name}')">
@@ -1954,7 +2204,7 @@ function onCategoryChange() {
         <div class="gating-task-name">
           <input type="text" value="${t.label}" readonly id="gating-task-${i}" />
         </div>
-        <input type="date" class="gating-due" id="gating-due-${i}" value="${projStart}" />
+        <input type="text" class="gating-due" id="gating-due-${i}" value="${projStart}" placeholder="yyyy-mm-dd" onmousedown="if(this.type==='text')this.type='date'" />
       </div>
     `).join('');
   } else {
@@ -2012,6 +2262,7 @@ async function createProject() {
 
   const newProj = rowToProject(projData);
   projects.push(newProj);
+  recordActivity('project-created', name, leads[0], name, `created project "${name}"`);
 
   // If Gating, create 8 milestone tasks
   if (category === 'Gating') {
@@ -2043,10 +2294,130 @@ async function createProject() {
   }
 
   document.getElementById('project-modal-overlay').classList.remove('open');
-  renderSidebarProjects();
-  renderDashboardProjects();
-  refreshTaskProjectSelect();
-  filterByProject(name);
+  requestAnimationFrame(() => {
+    renderSidebarProjects();
+    switch (currentPage) {
+      case 'kanban':   renderKanban(); break;
+      case 'dashboard': renderDashboardProjects(); break;
+      case 'list':
+        refreshTaskProjectSelect();
+        filterByProject(name);
+        break;
+      case 'gating':    renderGating(); break;
+      default: break;
+    }
+  });
+}
+
+// ── Edit Project ──────────────────────────────────────
+function editProject(id) {
+  resetDateInputs();
+  const proj = projects.find(p => p.id === id);
+  if (!proj) return;
+
+  editingProjectId = id;
+  document.getElementById('project-modal-title').textContent = 'Edit Project';
+  document.getElementById('project-save-btn').textContent = 'Save Changes';
+  document.getElementById('proj-name-input').value = proj.name;
+  document.getElementById('proj-desc-input').value = proj.desc || '';
+  document.getElementById('proj-category-select').value = proj.category;
+  document.getElementById('proj-priority-select').value = proj.priority;
+  document.getElementById('proj-start-date').value = proj.startDate;
+  document.getElementById('proj-due-date').value = proj.dueDate;
+  document.getElementById('proj-vertical-select').value = proj.vertical || 'Others';
+
+  // Pre-fill leads
+  selectedLeads = proj.lead ? proj.lead.split(',').map(l => l.trim()).filter(Boolean) : [];
+  renderLeadDropdown();
+
+  // Color picker
+  selectedColor = proj.color;
+  const picker = document.getElementById('color-picker');
+  picker.innerHTML = PALETTE.map(c => `
+    <div onclick="selectColor('${c}')" id="swatch-${c.replace('#','')}"
+      style="width:22px;height:22px;border-radius:50%;background:${c};cursor:pointer;
+             border:2px solid ${c === selectedColor ? 'var(--text)' : 'transparent'};
+             transition:border-color .15s;flex-shrink:0"></div>
+  `).join('');
+
+  onCategoryChange();
+
+  // Pre-fill gating due dates if category is Gating
+  if (proj.category === 'Gating') {
+    setTimeout(() => {
+      const gatingTasks = tasks.filter(t => t.project === proj.name && t.gatingKey);
+      gatingTasks.forEach(t => {
+        const input = document.getElementById('gating-due-' + GATING_TASKS.findIndex(gt => gt.key === t.gatingKey));
+        if (input && t.due) input.value = t.due;
+      });
+    }, 100);
+  }
+
+  document.getElementById('project-modal-overlay').classList.add('open');
+  setTimeout(() => document.getElementById('proj-name-input').focus(), 50);
+}
+
+async function saveProject() {
+  if (editingProjectId) {
+    await updateProject();
+  } else {
+    await createProject();
+  }
+}
+
+async function updateProject() {
+  const proj = projects.find(p => p.id === editingProjectId);
+  if (!proj) return;
+  const name = document.getElementById('proj-name-input').value.trim();
+  if (!name) { showToast('Please enter project name', true); return; }
+  const existing = projects.find(p => p.name === name && p.id !== editingProjectId);
+  if (existing) { showToast('Project name already exists', true); return; }
+  const dueDate = document.getElementById('proj-due-date').value;
+  if (!dueDate) { showToast('Please set due date', true); return; }
+  const startDate = document.getElementById('proj-start-date').value;
+  if (!startDate) { showToast('Please set start date', true); return; }
+  if (!selectedLeads.length) { showToast('Please select at least one lead', true); return; }
+  const lead = selectedLeads.join(', ');
+  const priority = document.getElementById('proj-priority-select').value;
+  const desc = document.getElementById('proj-desc-input').value.trim();
+  const category = document.getElementById('proj-category-select').value;
+  const vertical = document.getElementById('proj-vertical-select').value;
+  if (!vertical) { showToast('Please select a vertical', true); return; }
+
+  showLoading('Saving...');
+
+  const { error } = await sb.from('projects').update({
+    name, color: selectedColor, description: desc,
+    category, lead, priority,
+    start_date: startDate, due_date: dueDate, vertical,
+  }).eq('id', editingProjectId);
+
+  if (error) {
+    hideLoading();
+    showToast('Failed to update project: ' + error.message, true);
+    return;
+  }
+
+  // Update local project
+  Object.assign(proj, { name, color: selectedColor, desc, category, lead, priority, startDate, dueDate, vertical });
+  recordActivity('project-updated', name, selectedLeads[0] || lead, name, `updated project "${name}"`);
+  hideLoading();
+  showToast(`Project "${name}" updated ✓`);
+
+  document.getElementById('project-modal-overlay').classList.remove('open');
+  editingProjectId = null;
+
+  // Defer renders to next frame — avoids blocking UI after save
+  requestAnimationFrame(() => {
+    renderSidebarProjects();
+    switch (currentPage) {
+      case 'kanban':   renderKanban(); break;
+      case 'dashboard': renderDashboardProjects(); break;
+      case 'list':      refreshTaskProjectSelect(); break;
+      case 'gating':    renderGating(); break;
+      default: break;
+    }
+  });
 }
 
 // ── Dashboard Projects (dynamic) ────────────────────────
@@ -2066,13 +2437,20 @@ function refreshTaskProjectSelect() {
 
 // ── Navigation ───────────────────────────────────────
 function navigate(page, el) {
+  currentPage = page;
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   el.classList.add('active');
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + page).classList.add('active');
 
-  const titles = { dashboard:'Overview', kanban:'Status Overview', list:'Task List', members:'Members', gating:'Gating Tracking' };
+  const titles = { dashboard:'Team Activity', kanban:'Project Overview', list:'Task List', members:'Members Overview', gating:'Gating Tracking' };
   document.getElementById('page-title').textContent = titles[page];
+
+  // Hide + New Task on Dashboard and Members pages
+  const newTaskBtn = document.getElementById('topbar-new-task-btn');
+  if (newTaskBtn) {
+    newTaskBtn.style.display = (page === 'dashboard' || page === 'members') ? 'none' : '';
+  }
 
   const views = document.getElementById('topbar-views');
   views.innerHTML = '';
@@ -2080,19 +2458,20 @@ function navigate(page, el) {
   if (page === 'dashboard') { renderDashboard(); }
   if (page === 'kanban') { currentProjectFilter = null; renderKanban(); }
   if (page === 'list') {
-    // Clear search and filter state
-    const input = document.querySelector('.search-input input');
-    if (input) input.value = '';
     currentProjectFilter = null;
     currentFilter = 'all';
-    // Reset filter chips
-    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-    const allChip = document.querySelector('.filter-chip');
-    if (allChip) allChip.classList.add('active');
-    renderList(tasks);
+    populateFilterDropdowns();
+    clearFilters();
   }
   if (page === 'members') renderMembers();
-  if (page === 'gating')  { currentProjectFilter = null; renderGating(); }
+  if (page === 'gating')  {
+    currentProjectFilter = null;
+    gatingProjectFilter = '';
+    gatingLeadFilter = '';
+    gatingVerticalFilter = '';
+    gatingCustomOrder = [];
+    renderGating();
+  }
 }
 
 // ── Theme ────────────────────────────────────────────
@@ -2106,14 +2485,21 @@ function toggleTheme() {
 
 // ── Kanban ───────────────────────────────────────────
 const columns = [
-  { id:'todo',       label:'To Do',       dotColor:'#9b9a96' },
-  { id:'inprogress', label:'In Progress', dotColor:'#2f6fef' },
-  { id:'done',       label:'Done',         dotColor:'#38a169' },
-  { id:'overdue',    label:'Overdue',      dotColor:'#e53e3e' },
+  { id:'todo',       label:'To Do',       dotColor:'#9ca3af' },
+  { id:'inprogress', label:'In Progress', dotColor:'#6366f1' },
+  { id:'done',       label:'Done',         dotColor:'#22c55e' },
+  { id:'overdue',    label:'Overdue',      dotColor:'#ef4444' },
 ];
+
+// Project status drag overrides (in-memory)
+let projectStatusOverrides = {};
+let kanbanCustomOrder = {};   // { 'todo': [id1,id2,...], 'inprogress': [...], ... }
+let currentPage = 'list';   // tracks active page to skip unnecessary renders
 
 // 计算项目状态
 function getProjectStatus(proj) {
+  // Check manual override first (set via drag-and-drop)
+  if (projectStatusOverrides[proj.id]) return projectStatusOverrides[proj.id];
   const projTasks = tasks.filter(t => t.project === proj.name);
   if (!projTasks.length) return 'todo';
   const today = new Date();
@@ -2144,17 +2530,9 @@ function getProjectStatus(proj) {
 
 // ── Dashboard ─────────────────────────────────────
 function renderDashboard() {
-  // Project stats
-  const total = projects.length;
-  const done = projects.filter(p => getProjectStatus(p) === 'done').length;
-  const inprogress = projects.filter(p => getProjectStatus(p) === 'inprogress').length;
-  const overdue = projects.filter(p => getProjectStatus(p) === 'overdue').length;
-  
-  document.getElementById('stat-total').textContent = total;
-  document.getElementById('stat-inprogress').textContent = inprogress;
-  document.getElementById('stat-done').textContent = done;
-  document.getElementById('stat-overdue').textContent = overdue;
-  
+  // Keep filter dropdowns in sync
+  populateFilterDropdowns();
+
   // Update task badge in nav
   const badge = document.getElementById('badge-tasks');
   if (badge) {
@@ -2165,119 +2543,127 @@ function renderDashboard() {
       badge.style.display = 'none';
     }
   }
-  
-  // Render members activity
-  const container = document.getElementById('members-activity');
-  if (!members.length) {
-    container.innerHTML = '<div class="no-activity">No team members yet.</div>';
+
+  const feed = document.getElementById('timeline-feed');
+  if (!activityLog.length && !tasks.length) {
+    feed.innerHTML = '<div class="timeline-empty">No activity yet. Create your first task!</div>';
     return;
   }
-  
-  // Sort members: whoever has the most recent activity comes first
-  const sortedMembers = [...members].sort((a, b) => {
-    const aTasks = tasks.filter(t => t.assignee === a.name);
-    const bTasks = tasks.filter(t => t.assignee === b.name);
 
-    // Get most recent "activity" timestamp per member
-    // Priority: completedDate > in-progress tasks (sorted by due date) > todo tasks
-    const aRecent = getMemberLastActivity(aTasks);
-    const bRecent = getMemberLastActivity(bTasks);
+  // Use activity log if available; fall back to task state
+  if (activityLog.length > 0) {
+    const dotColors = {
+      created: '#22c55e', deleted: '#ef4444', status: '#6366f1',
+      assignee: '#3b82f6', priority: '#f59e0b', note: '#64748b',
+      'project-created': '#22c55e', 'project-deleted': '#ef4444', 'project-updated': '#3b82f6',
+    };
 
-    // Most recently active first
-    if (aRecent && bRecent) return new Date(bRecent) - new Date(aRecent);
-    if (aRecent) return -1; // a has activity, b doesn't
-    if (bRecent) return 1;  // b has activity, a doesn't
-    return 0;
+    const timeFormat = (ts) => {
+      if (!ts) return '';
+      const d = new Date(ts);
+      const now = new Date();
+      const diff = now - d;
+      if (diff < 60000) return 'just now';
+      if (diff < 3600000) return Math.floor(diff / 60000) + 'm ago';
+      if (diff < 86400000) return Math.floor(diff / 3600000) + 'h ago';
+      if (diff < 172800000) return 'yesterday';
+      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    };
+
+    feed.innerHTML = activityLog.slice(0, 50).map(a => `
+      <div class="timeline-item">
+        <div class="timeline-avatar" style="background:${a.memberColor}">${a.memberInitial}</div>
+        <div class="timeline-body">
+          <div class="timeline-line">
+            <span class="timeline-name">${a.assignee || 'System'}</span>
+            <span class="timeline-action">${a.detail}</span>
+          </div>
+          <div class="timeline-detail">
+            <span class="timeline-task">${a.taskName}</span>
+            <span class="timeline-project" style="border-left-color:${a.projColor}">${a.project || '—'}</span>
+          </div>
+        </div>
+        <div class="timeline-meta">
+          <span class="timeline-dot" style="background:${dotColors[a.actionType] || '#9ca3af'}"></span>
+          <span class="timeline-time">${timeFormat(a.timestamp)}</span>
+        </div>
+      </div>
+    `).join('');
+
+    // If there are also tasks not covered in activityLog (initial load), pad with current state
+    return;
+  }
+
+  // Fallback: build from current task state (first load before any activity)
+  const activities = tasks.map(t => {
+    const proj = projects.find(p => p.name === t.project);
+    const mem = members.find(m => m.name === t.assignee);
+    const memberColor = memberColors[t.assignee] || '#999';
+    const projColor = proj ? proj.color : '#999';
+    const initial = (t.assignee || '??').split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+
+    let actionType, actionText, sortDate;
+    if (t.status === 'done' && t.completedDate) {
+      actionType = 'done';
+      actionText = 'completed';
+      sortDate = new Date(t.completedDate);
+    } else if (t.status === 'overdue') {
+      actionType = 'overdue';
+      actionText = 'has overdue';
+      sortDate = new Date(t.due);
+    } else if (t.status === 'inprogress') {
+      actionType = 'inprogress';
+      actionText = 'is working on';
+      sortDate = new Date(t.due);
+    } else {
+      actionType = 'todo';
+      actionText = 'needs to start';
+      sortDate = new Date(t.due);
+    }
+
+    return { t, proj, mem, memberColor, projColor, initial, actionType, actionText, sortDate };
   });
 
-  function getMemberLastActivity(memberTasks) {
-    // Completed tasks with completedDate come first (most recent completion)
-    const completed = memberTasks.filter(t => t.completedDate);
-    if (completed.length) {
-      // Return the most recent completedDate
-      return completed.reduce((latest, t) => {
-        return (!latest || t.completedDate > latest) ? t.completedDate : latest;
-      }, null);
-    }
-    // In-progress tasks next (by nearest due date)
-    const inProgress = memberTasks.filter(t => t.status === 'inprogress');
-    if (inProgress.length) {
-      return inProgress.reduce((nearest, t) => {
-        return (!nearest || t.due < nearest) ? t.due : nearest;
-      }, null);
-    }
-    // Overdue tasks
-    const overdue = memberTasks.filter(t => t.status === 'overdue');
-    if (overdue.length) {
-      return overdue.reduce((nearest, t) => {
-        return (!nearest || t.due < nearest) ? t.due : nearest;
-      }, null);
-    }
-    // Todo tasks (by nearest due date)
-    const todo = memberTasks.filter(t => t.status === 'todo');
-    if (todo.length) {
-      return todo.reduce((nearest, t) => {
-        return (!nearest || t.due < nearest) ? t.due : nearest;
-      }, null);
-    }
-    return null;
-  }
-  
-  container.innerHTML = sortedMembers.map(m => {
-    // Get tasks assigned to this member, sorted by recent activity
-    const memberTasks = tasks.filter(t => t.assignee === m.name);
-    
-    let activityHtml = '';
-    if (memberTasks.length === 0) {
-      activityHtml = '<div class="no-activity">No tasks assigned</div>';
-    } else {
-      // Show tasks grouped by status
-      const byStatus = {
-        'inprogress': memberTasks.filter(t => t.status === 'inprogress'),
-        'todo': memberTasks.filter(t => t.status === 'todo'),
-        'done': memberTasks.filter(t => t.status === 'done'),
-        'overdue': memberTasks.filter(t => t.status === 'overdue'),
-      };
-      
-      const activities = [];
-      if (byStatus.overdue.length) {
-        activities.push(`<span class="status-badge status-overdue">${byStatus.overdue.length} overdue</span>`);
-      }
-      if (byStatus.inprogress.length) {
-        activities.push(`<span class="status-badge status-inprogress">${byStatus.inprogress.length} in progress</span>`);
-      }
-      if (byStatus.todo.length) {
-        activities.push(`<span class="status-badge status-todo">${byStatus.todo.length} to do</span>`);
-      }
-      if (byStatus.done.length) {
-        activities.push(`<span class="status-badge status-done">${byStatus.done.length} done</span>`);
-      }
-      
-      // Show first few tasks as examples
-      const recentTasks = memberTasks.slice(0, 3);
-      const taskList = recentTasks.map(t => {
-        const proj = projects.find(p => p.name === t.project);
-        const color = proj ? proj.color : '#999';
-        return `<div class="activity-item">
-          <span class="task-name">${t.name}</span>
-          <span class="project-tag" style="border-left: 2px solid ${color}; padding-left: 6px; margin-left: 6px;">${t.project || 'No project'}</span>
-        </div>`;
-      }).join('');
-      
-      activityHtml = `
-        <div style="margin-bottom: 8px;">${activities.join(' ')}</div>
-        <div class="activity-list">${taskList}</div>
-      `;
-    }
-    
-    const initial = m.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+  // Sort: most recent activity first (completedDate for done, due for active/overdue/todo)
+  activities.sort((a, b) => b.sortDate - a.sortDate);
+
+  const actionConfig = {
+    done:       { label: 'done', dotColor: '#22c55e' },
+    inprogress: { label: 'in progress', dotColor: '#6366f1' },
+    overdue:    { label: 'overdue', dotColor: '#ef4444' },
+    todo:       { label: 'to do', dotColor: '#9ca3af' },
+  };
+
+  const timeFormat = (d) => {
+    if (!d) return '';
+    const now = new Date();
+    const diff = now - d;
+    if (diff < 60000) return 'just now';
+    if (diff < 3600000) return Math.floor(diff / 60000) + 'm ago';
+    if (diff < 86400000) return Math.floor(diff / 3600000) + 'h ago';
+    if (diff < 172800000) return 'yesterday';
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  };
+
+  feed.innerHTML = activities.map(a => {
+    const ac = actionConfig[a.actionType];
+    const timeStr = a.actionType === 'done' ? timeFormat(a.sortDate) : 'due ' + timeFormat(a.sortDate);
     return `
-      <div class="member-activity-card">
-        <div class="member-avatar" style="background:${m.color}">${initial}</div>
-        <div class="member-info">
-          <div class="member-name">${m.name}</div>
-          <div class="member-role">${m.role} · ${memberTasks.length} tasks</div>
-          ${activityHtml}
+      <div class="timeline-item">
+        <div class="timeline-avatar" style="background:${a.memberColor}">${a.initial}</div>
+        <div class="timeline-body">
+          <div class="timeline-line">
+            <span class="timeline-name">${a.t.assignee || 'Unassigned'}</span>
+            <span class="timeline-action">${a.actionText}</span>
+          </div>
+          <div class="timeline-detail">
+            <span class="timeline-task">${a.t.name}</span>
+            <span class="timeline-project" style="border-left-color:${a.projColor}">${a.t.project || '—'}</span>
+          </div>
+        </div>
+        <div class="timeline-meta">
+          <span class="timeline-dot" style="background:${ac.dotColor}"></span>
+          <span class="timeline-time">${timeStr}</span>
         </div>
       </div>
     `;
@@ -2293,6 +2679,19 @@ function renderKanban() {
   board.innerHTML = '';
   columns.forEach(col => {
     const colProjects = projects.filter(p => getProjectStatus(p) === col.id);
+    // Sort by priority: High > Medium > Low
+    const priorityOrder = { high: 0, medium: 1, low: 2 };
+    colProjects.sort((a, b) => (priorityOrder[a.priority] || 9) - (priorityOrder[b.priority] || 9));
+    // Apply custom drag order within this column if present
+    if (kanbanCustomOrder[col.id] && kanbanCustomOrder[col.id].length > 0) {
+      const orderMap = {};
+      kanbanCustomOrder[col.id].forEach((id, idx) => { orderMap[id] = idx; });
+      colProjects.sort((a, b) => {
+        const ai = orderMap[a.id] ?? 9999;
+        const bi = orderMap[b.id] ?? 9999;
+        return ai - bi;
+      });
+    }
     const el = document.createElement('div');
     el.className = 'kanban-col';
     el.innerHTML = `
@@ -2301,12 +2700,111 @@ function renderKanban() {
         ${col.label}
         <span class="col-count">${colProjects.length}</span>
       </div>
-      <div class="kanban-cards" id="col-${col.id}">
+      <div class="kanban-cards" id="col-${col.id}" ondragover="handleProjDragOver(event)" ondragleave="handleProjDragLeave(event)" ondrop="handleProjDrop(event, '${col.id}')">
         ${colProjects.map(p => renderProjectCard(p)).join('')}
       </div>
     `;
     board.appendChild(el);
   });
+}
+
+// ── Project Card Drag & Drop ────────────────────────────
+function handleProjDragStart(e) {
+  const card = e.target.closest('.proj-card');
+  if (!card) return;
+  e.dataTransfer.setData('text/plain', card.dataset.projectId);
+  e.dataTransfer.effectAllowed = 'move';
+  card.classList.add('dragging');
+}
+
+function handleProjDragEnd(e) {
+  const card = e.target.closest('.proj-card');
+  if (card) card.classList.remove('dragging');
+  // Remove drag-over and drop-before from everything
+  document.querySelectorAll('.kanban-cards').forEach(c => c.classList.remove('drag-over'));
+  document.querySelectorAll('.proj-card').forEach(c => c.classList.remove('drop-before'));
+}
+
+function handleProjDragOver(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  const col = e.currentTarget;
+  col.classList.add('drag-over');
+
+  // Clear previous card-level drop indicators
+  col.querySelectorAll('.proj-card.drop-before').forEach(c => c.classList.remove('drop-before'));
+
+  // Find which card to insert before (based on mouse Y)
+  const cards = [...col.querySelectorAll('.proj-card')];
+  for (const card of cards) {
+    const rect = card.getBoundingClientRect();
+    if (e.clientY < rect.top + rect.height / 2) {
+      card.classList.add('drop-before');
+      return;
+    }
+  }
+}
+
+function handleProjDragLeave(e) {
+  const col = e.currentTarget;
+  if (!col.contains(e.relatedTarget)) {
+    col.classList.remove('drag-over');
+    col.querySelectorAll('.proj-card.drop-before').forEach(c => c.classList.remove('drop-before'));
+  }
+}
+
+function handleProjDrop(e, columnId) {
+  e.preventDefault();
+  const col = e.currentTarget;
+  col.classList.remove('drag-over');
+  col.querySelectorAll('.proj-card.drop-before').forEach(c => c.classList.remove('drop-before'));
+
+  const projectId = e.dataTransfer.getData('text/plain');
+  if (!projectId) return;
+
+  const proj = projects.find(p => String(p.id) === projectId);
+  if (!proj) return;
+
+  // Determine insertion index from mouse position
+  const allCards = [...col.querySelectorAll('.proj-card')];
+  let insertIdx = allCards.length; // default: end of column
+  for (let i = 0; i < allCards.length; i++) {
+    if (allCards[i].dataset.projectId === projectId) continue;
+    const rect = allCards[i].getBoundingClientRect();
+    if (e.clientY < rect.top + rect.height / 2) {
+      insertIdx = i;
+      break;
+    }
+  }
+
+  const draggedCard = col.querySelector(`.proj-card[data-project-id="${projectId}"]`);
+  const currentIdxInCol = draggedCard ? allCards.indexOf(draggedCard) : -1;
+  const sourceColId = getProjectStatus(proj);
+
+  if (sourceColId === columnId) {
+    // ── Same column: reorder only ──
+    if (currentIdxInCol >= 0) {
+      const adjustedIdx = insertIdx > currentIdxInCol ? insertIdx - 1 : insertIdx;
+      const order = allCards
+        .filter(c => c.dataset.projectId !== projectId)
+        .map(c => Number(c.dataset.projectId));
+      order.splice(adjustedIdx, 0, Number(projectId));
+      kanbanCustomOrder[columnId] = order;
+    }
+  } else {
+    // ── Cross-column: set status override + insert at position ──
+    projectStatusOverrides[proj.id] = columnId;
+    recordActivity('status', proj.name, proj.lead, proj.name,
+      `moved project "${proj.name}" to ${columns.find(c => c.id === columnId)?.label || columnId}`);
+
+    const order = allCards
+      .filter(c => c.dataset.projectId !== projectId)
+      .map(c => Number(c.dataset.projectId));
+    order.splice(insertIdx, 0, Number(projectId));
+    kanbanCustomOrder[columnId] = order;
+  }
+
+  renderKanban();
 }
 
 function renderProjectCard(proj) {
@@ -2328,18 +2826,24 @@ function renderProjectCard(proj) {
         <div class="proj-task-check ${done?'done':''}" onclick="toggleTask(${t.id})"></div>
         <span class="proj-task-name ${done?'done':''}">${t.name}</span>
         <span class="proj-task-due ${t.status==='overdue'?'overdue':''}">${formatDate(t.due)}</span>
+
       </div>
     `;
   }).join('') : `<div style="font-size:12px;color:var(--text3);padding:4px 0">No tasks</div>`;
 
   return `
-    <div class="proj-card" id="proj-card-${proj.id}">
+    <div class="proj-card" id="proj-card-${proj.id}" data-project-id="${proj.id}">
+      <div class="proj-card-drag-handle" draggable="true" ondragstart="handleProjDragStart(event)" ondragend="handleProjDragEnd(event)" title="Drag to reorder or move">⋮⋮</div>
       <div class="proj-card-header">
         <div style="width:10px;height:10px;border-radius:50%;background:${proj.color};flex-shrink:0"></div>
         <span class="proj-card-name">${proj.name}</span>
         <span class="category-badge ${catClass}" style="flex-shrink:0">${catLabel}</span>
       </div>
       <div class="proj-card-tasks">${taskRows}</div>
+      <div class="proj-card-add-row" onclick="event.stopPropagation();openModal('${proj.name.replace(/'/g, "\\'")}')" title="Add task to this project">
+        <span class="proj-card-add-icon">＋</span>
+        <span class="proj-card-add-label">Add task</span>
+      </div>
       <div class="proj-card-footer">
         <div class="proj-card-meta">
           <div style="display:flex;align-items:center;gap:4px">
@@ -2347,7 +2851,7 @@ function renderProjectCard(proj) {
           </div>
           <span>${proj.lead}</span>
           <span>·</span>
-          <span style="color:${priorityConfig[proj.priority].color}">${priorityConfig[proj.priority].icon} ${priorityConfig[proj.priority].label}</span>
+          <span class="priority-pill" style="background:${priorityConfig[proj.priority].bg};color:${priorityConfig[proj.priority].color}">${priorityConfig[proj.priority].icon} ${priorityConfig[proj.priority].label}</span>
         </div>
         <span class="proj-card-ddl ${ddlClass}">${ddlLabel} ${formatDate(proj.dueDate)}</span>
       </div>
@@ -2358,22 +2862,21 @@ function renderProjectCard(proj) {
 // ── Task List ────────────────────────────────────────
 let currentFilter = 'all';
 let currentProjectFilter = null;
+let taskModalProject = null;  // project context for task creation
+let editingProjectId = null;   // project id being edited (null = creating new)
+
 function renderList(data) {
   const tbody = document.getElementById('task-tbody');
   if (!data.length) {
     tbody.innerHTML = `<tr><td colspan="9"><div class="empty-state"><div class="empty-icon">📭</div><div class="empty-text">No tasks</div></div></td></tr>`;
     return;
   }
-  tbody.innerHTML = data.map(t => {
+    tbody.innerHTML = data.map(t => {
     const s = statusConfig[t.status];
-    const p = priorityConfig[t.priority];
     const mc = memberColors[t.assignee] || '#666';
     const pc = getProjectColor(t.project);
     const isDone = t.status === 'done';
-    const priorityOptions = Object.entries(priorityConfig).map(([k, cfg]) =>
-      `<option value="${k}" ${t.priority === k ? 'selected' : ''}>${cfg.icon} ${cfg.label}</option>`
-    ).join('');
-    const memberOptions = members.map(m =>
+    const memberOptions = [...members].sort((a,b) => a.name.localeCompare(b.name)).map(m =>
       `<option value="${m.name}" ${t.assignee === m.name ? 'selected' : ''}>${m.name}</option>`
     ).join('');
     const statusOptions = Object.entries(statusConfig).map(([k, cfg]) =>
@@ -2401,14 +2904,10 @@ function renderList(data) {
           </select>
         </td>
         <td>
-          <select class="inline-select priority-select" onchange="updateTask(${t.id},'priority',this.value)" title="Click to change priority">
-            ${priorityOptions}
-          </select>
-        </td>
-        <td>
-          <select class="inline-select status-select" onchange="updateTask(${t.id},'status',this.value)" title="Click to change status" style="background:${s.color}22;color:${s.color}">
+          <select class="inline-select status-select" onchange="updateTask(${t.id},'status',this.value)" title="Click to change status" style="display:none">
             ${statusOptions}
           </select>
+          <span class="status-pill" style="background:${s.bg};color:${s.color}" onclick="showStatusSelect(this)" title="Click to change status">${s.label}</span>
         </td>
         <td style="color:${t.status==='overdue'?'var(--red)':'var(--text2)'}">
           ${formatDate(t.due)}
@@ -2419,25 +2918,59 @@ function renderList(data) {
         <td>
           <input type="text" class="task-note-input" value="${t.note || ''}" placeholder="Add notes..." onchange="updateTaskNote(${t.id}, this.value)" title="Click to add notes" />
         </td>
+        <td>
+          <span class="task-del" onclick="deleteTask(${t.id})" title="Delete task">×</span>
+        </td>
       </tr>
     `;
   }).join('');
 }
 
-function filterTasks(query) {
-  // 如果查询为空，清除项目过滤
-  if (!query) currentProjectFilter = null;
-  let filtered = tasks;
-  if (currentFilter !== 'all') filtered = filtered.filter(t => t.status === currentFilter);
-  if (query) filtered = filtered.filter(t => t.name.includes(query) || t.assignee.includes(query) || t.project.includes(query));
+// ── Filter Dropdowns ──────────────────────────────
+function populateFilterDropdowns() {
+  const projSel = document.getElementById('filter-project');
+  const assigneeSel = document.getElementById('filter-assignee');
+  if (!projSel || !assigneeSel) return;
+
+  const prevProj = projSel.value;
+  const prevAssignee = assigneeSel.value;
+
+  // Project dropdown
+  projSel.innerHTML = '<option value="">All</option>' +
+    projects.map(p => `<option value="${p.name}">${p.name}</option>`).join('');
+  projSel.value = projSel.querySelector(`option[value="${prevProj}"]`) ? prevProj : '';
+
+  // Assignee dropdown
+  const uniqueAssignees = [...new Set(tasks.map(t => t.assignee).filter(Boolean))].sort();
+  assigneeSel.innerHTML = '<option value="">All</option>' +
+    uniqueAssignees.map(a => `<option value="${a}">${a}</option>`).join('');
+  assigneeSel.value = assigneeSel.querySelector(`option[value="${prevAssignee}"]`) ? prevAssignee : '';
+}
+
+function applyFilters() {
+  const projectVal = document.getElementById('filter-project')?.value || '';
+  const assigneeVal = document.getElementById('filter-assignee')?.value || '';
+  const statusVal = document.getElementById('filter-status')?.value || '';
+
+  let filtered = [...tasks];
+  if (projectVal) filtered = filtered.filter(t => t.project === projectVal);
+  if (assigneeVal) filtered = filtered.filter(t => t.assignee === assigneeVal);
+  if (statusVal) filtered = filtered.filter(t => t.status === statusVal);
+
+  // Sync global state for cross-page context
+  currentProjectFilter = projectVal || null;
+  currentFilter = statusVal || 'all';
+
   renderList(filtered);
 }
 
-function filterStatus(status, el) {
-  currentFilter = status;
-  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-  el.classList.add('active');
-  filterTasks(document.querySelector('.search-input input').value);
+function clearFilters() {
+  document.getElementById('filter-project').value = '';
+  document.getElementById('filter-assignee').value = '';
+  document.getElementById('filter-status').value = '';
+  currentProjectFilter = null;
+  currentFilter = 'all';
+  renderList(tasks);
 }
 
 async function toggleTask(id) {
@@ -2455,6 +2988,13 @@ async function toggleTask(id) {
 
   t.status = newStatus;
   t.completedDate = newCompleted;
+
+  // Record activity
+  if (wasDone) {
+    recordActivity('status', t.name, t.assignee, t.project, `reopened task "${t.name}"`);
+  } else {
+    recordActivity('status', t.name, t.assignee, t.project, `completed task "${t.name}" ✓`);
+  }
 
   const active = document.querySelector('.page.active');
   if (active.id === 'page-list') {
@@ -2480,7 +3020,23 @@ async function updateTask(id, field, value) {
   const dbField = { assignee:'assignee', priority:'priority', status:'status' }[field] || field;
   const { error } = await sb.from('tasks').update({ [dbField]: value }).eq('id', id);
   if (error) { showToast('Update failed: ' + error.message, true); return; }
+  const oldValue = t[field];
   t[field] = value;
+
+  // Record activity
+  if (field === 'status') {
+    const statusMsgs = {
+      done:       `completed task "${t.name}" ✓`,
+      inprogress: `started working on "${t.name}"`,
+      todo:       `reset "${t.name}" to To Do`,
+      overdue:    `marked "${t.name}" as overdue ⚠`,
+    };
+    recordActivity('status', t.name, t.assignee, t.project, statusMsgs[value] || `moved "${t.name}" to ${statusConfig[value].label}`);
+  } else if (field === 'assignee') {
+    recordActivity('assignee', t.name, value, t.project, `reassigned "${t.name}" from ${oldValue || 'unassigned'} to ${value}`);
+  } else if (field === 'priority') {
+    recordActivity('priority', t.name, t.assignee, t.project, `set "${t.name}" priority to ${priorityConfig[value].label}`);
+  }
 
   const active = document.querySelector('.page.active');
   if (active.id === 'page-list') {
@@ -2509,39 +3065,159 @@ async function updateTaskNote(id, note) {
   const { error } = await sb.from('tasks').update({ note }).eq('id', id);
   if (error) { showToast('Save failed: ' + error.message, true); return; }
   t.note = note;
+  recordActivity('note', t.name, t.assignee, t.project, note ? `updated note on "${t.name}"` : `removed note from "${t.name}"`);
   if (note) showToast('Note saved');
 }
 
-// ── Gating Tracking ────────────────────────────────────
-let selectedVerticals = []; // 空 = 显示全部
-
-function renderGatingFilters() {
-  const container = document.getElementById('gating-vertical-filters');
-  if (!container) return;
-
-  // 获取所有 Gating 项目的 vertical（去重）
-  const gatingProjects = projects.filter(p => p.category === 'Gating');
-  const verticals = [...new Set(gatingProjects.map(p => p.vertical).filter(Boolean))].sort();
-
-  let chips = `<span class="gating-filter-chip all ${selectedVerticals.length === 0 ? 'active' : ''}" onclick="filterByVertical(null)">全部</span>`;
-  verticals.forEach(v => {
-    chips += `<span class="gating-filter-chip ${selectedVerticals.includes(v) ? 'active' : ''}" onclick="filterByVertical('${v}')">${v}</span>`;
+async function deleteTask(id) {
+  const numId = Number(id);
+  const t = tasks.find(t => Number(t.id) === numId);
+  if (!t) return;
+  const confirmed = await showConfirm({
+    title: 'Delete Task',
+    message: `Are you sure you want to delete <strong>${t.name}</strong>? This action cannot be undone.`,
+    icon: '🗑️',
+    confirmLabel: 'Delete',
+    danger: true,
   });
-  container.innerHTML = chips;
-}
+  if (!confirmed) return;
+  showLoading('Deleting...');
+  const { error } = await sb.from('tasks').delete().eq('id', numId);
+  hideLoading();
+  if (error) { showToast('Delete failed: ' + error.message, true); return; }
+  const taskName = t.name, taskAssignee = t.assignee, taskProject = t.project;
+  recordActivity('deleted', taskName, taskAssignee, taskProject, `deleted task "${taskName}"`);
+  tasks = tasks.filter(t => Number(t.id) !== numId);
+  showToast(`Task "${taskName}" deleted`);
 
-function filterByVertical(vertical) {
-  if (vertical === null) {
-    selectedVerticals = [];
-  } else {
-    const idx = selectedVerticals.indexOf(vertical);
-    if (idx > -1) {
-      selectedVerticals.splice(idx, 1);
+  // Refresh current view
+  const active = document.querySelector('.page.active');
+  if (active.id === 'page-list') {
+    if (currentProjectFilter) {
+      renderList(tasks.filter(t => t.project === currentProjectFilter));
     } else {
-      selectedVerticals.push(vertical);
+      renderList(tasks);
     }
   }
-  renderGatingFilters();
+  if (active.id === 'page-kanban') renderKanban();
+  if (active.id === 'page-gating') renderGating();
+  renderDashboardProjects();
+}
+
+// ── Gating Tracking ────────────────────────────────────
+let gatingProjectFilter = '';  // '' = All
+let gatingLeadFilter = '';     // '' = All
+let gatingVerticalFilter = ''; // '' = All
+let gatingCustomOrder = [];    // custom drag order (project IDs)
+
+function getGatingProgress(proj) {
+  const projTasks = tasks.filter(t => t.project === proj.name);
+  const nodeMap = {};
+  projTasks.forEach(t => { if (t.gatingKey) nodeMap[t.gatingKey] = t; });
+  let doneCount = 0;
+  GATING_TASKS.forEach(gt => {
+    if (nodeMap[gt.key] && nodeMap[gt.key].status === 'done') doneCount++;
+  });
+  return { doneCount, total: GATING_TASKS.length, pct: Math.round(doneCount / GATING_TASKS.length * 100) };
+}
+
+// ── Gating Drag & Drop ─────────────────────────────────
+function handleGatingDragStart(e) {
+  const row = e.target.closest('tr');
+  if (!row) return;
+  e.dataTransfer.setData('text/plain', row.dataset.projectId);
+  e.dataTransfer.effectAllowed = 'move';
+  row.classList.add('dragging');
+}
+
+function handleGatingDragEnd(e) {
+  const row = e.target.closest('tr');
+  if (row) row.classList.remove('dragging');
+  document.querySelectorAll('.gating-table tbody tr').forEach(r => r.classList.remove('drag-over'));
+}
+
+function handleGatingDragOver(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  const row = e.target.closest('tr');
+  if (row && !row.classList.contains('dragging')) {
+    row.classList.add('drag-over');
+  }
+}
+
+function handleGatingDragLeave(e) {
+  const row = e.target.closest('tr');
+  if (row && !row.contains(e.relatedTarget)) {
+    row.classList.remove('drag-over');
+  }
+}
+
+function handleGatingDrop(e) {
+  e.preventDefault();
+  const targetRow = e.target.closest('tr');
+  if (!targetRow) return;
+  targetRow.classList.remove('drag-over');
+
+  const draggedId = e.dataTransfer.getData('text/plain');
+  if (!draggedId || draggedId === targetRow.dataset.projectId) return;
+
+  // Read current visible order
+  const visibleIds = [];
+  document.querySelectorAll('.gating-table tbody tr').forEach(r => {
+    const id = r.dataset.projectId;
+    if (id) visibleIds.push(id);
+  });
+
+  // Remove dragged from list, insert before target
+  const dragIdx = visibleIds.indexOf(draggedId);
+  const targetIdx = visibleIds.indexOf(targetRow.dataset.projectId);
+  if (dragIdx === -1 || targetIdx === -1) return;
+
+  visibleIds.splice(dragIdx, 1);
+  visibleIds.splice(dragIdx < targetIdx ? targetIdx - 1 : targetIdx, 0, draggedId);
+  gatingCustomOrder = visibleIds;
+
+  renderGatingTable();
+}
+
+function renderGatingFilters() {
+  // Populate Project dropdown
+  const projSel = document.getElementById('gating-project-filter');
+  if (projSel) {
+    const gatingProjects = projects.filter(p => p.category === 'Gating');
+    const projNames = [...new Set(gatingProjects.map(p => p.name))].sort();
+    projSel.innerHTML = '<option value="">All</option>' + projNames.map(p =>
+      `<option value="${p}" ${gatingProjectFilter === p ? 'selected' : ''}>${p}</option>`
+    ).join('');
+  }
+
+  // Populate Lead dropdown
+  const leadSel = document.getElementById('gating-lead-filter');
+  if (leadSel) {
+    const allLeads = new Set();
+    projects.filter(p => p.category === 'Gating').forEach(p => {
+      (p.lead || '').split(',').map(l => l.trim()).filter(Boolean).forEach(l => allLeads.add(l));
+    });
+    leadSel.innerHTML = '<option value="">All</option>' + [...allLeads].sort().map(l =>
+      `<option value="${l}" ${gatingLeadFilter === l ? 'selected' : ''}>${l}</option>`
+    ).join('');
+  }
+
+  // Populate Vertical dropdown
+  const vertSel = document.getElementById('gating-vertical-filter');
+  if (vertSel) {
+    const gatingProjects = projects.filter(p => p.category === 'Gating');
+    const verticals = [...new Set(gatingProjects.map(p => p.vertical).filter(Boolean))].sort();
+    vertSel.innerHTML = '<option value="">All</option>' + verticals.map(v =>
+      `<option value="${v}" ${gatingVerticalFilter === v ? 'selected' : ''}>${v}</option>`
+    ).join('');
+  }
+}
+
+function onGatingFilterChange() {
+  gatingProjectFilter = document.getElementById('gating-project-filter')?.value || '';
+  gatingLeadFilter = document.getElementById('gating-lead-filter')?.value || '';
+  gatingVerticalFilter = document.getElementById('gating-vertical-filter')?.value || '';
   renderGatingTable();
 }
 
@@ -2557,8 +3233,37 @@ function renderGatingTable() {
   let gatingProjects = projects.filter(p => p.category === 'Gating');
   
   // Filter by vertical
-  if (selectedVerticals.length > 0) {
-    gatingProjects = gatingProjects.filter(p => selectedVerticals.includes(p.vertical));
+  if (gatingVerticalFilter) {
+    gatingProjects = gatingProjects.filter(p => p.vertical === gatingVerticalFilter);
+  }
+
+  // Filter by project name
+  if (gatingProjectFilter) {
+    gatingProjects = gatingProjects.filter(p => p.name === gatingProjectFilter);
+  }
+
+  // Filter by lead
+  if (gatingLeadFilter) {
+    gatingProjects = gatingProjects.filter(p => (p.lead || '').split(',').map(l => l.trim()).includes(gatingLeadFilter));
+  }
+
+  // Sort: Progress ASC (less progress first), break ties with Priority DESC (High > Medium > Low)
+  const priorityOrder = { high: 0, medium: 1, low: 2 };
+  gatingProjects.sort((a, b) => {
+    const pa = getGatingProgress(a).pct;
+    const pb = getGatingProgress(b).pct;
+    if (pa !== pb) return pa - pb;
+    return (priorityOrder[a.priority] || 9) - (priorityOrder[b.priority] || 9);
+  });
+  // Apply custom drag order if user has reordered
+  if (gatingCustomOrder.length > 0) {
+    const orderMap = {};
+    gatingCustomOrder.forEach((id, idx) => { orderMap[id] = idx; });
+    gatingProjects.sort((a, b) => {
+      const ai = orderMap[a.id] ?? 9999;
+      const bi = orderMap[b.id] ?? 9999;
+      return ai - bi;
+    });
   }
 
   if (!gatingProjects.length) {
@@ -2572,21 +3277,14 @@ function renderGatingTable() {
   // Build table rows
   let rows = '';
   gatingProjects.forEach(proj => {
-    const projTasks = tasks.filter(t => t.project === proj.name);
+    const { doneCount, total: totalNodes, pct } = getGatingProgress(proj);
 
-    // Map gatingKey to task
+    // Map gatingKey to task (needed for milestone cells)
+    const projTasks = tasks.filter(t => t.project === proj.name);
     const nodeMap = {};
     projTasks.forEach(t => {
       if (t.gatingKey) nodeMap[t.gatingKey] = t;
     });
-
-    const totalNodes = GATING_TASKS.length;
-    let doneCount = 0;
-    GATING_TASKS.forEach(gt => {
-      const t = nodeMap[gt.key];
-      if (t && t.status === 'done') doneCount++;
-    });
-    const pct = totalNodes > 0 ? Math.round(doneCount / totalNodes * 100) : 0;
 
     // Build milestone cells
     const msCells = GATING_TASKS.map(gt => {
@@ -2611,7 +3309,8 @@ function renderGatingTable() {
     }).join('');
 
     rows += `
-      <tr>
+      <tr draggable="true" data-project-id="${proj.id}" ondragstart="handleGatingDragStart(event)" ondragend="handleGatingDragEnd(event)" ondragover="handleGatingDragOver(event)" ondragleave="handleGatingDragLeave(event)" ondrop="handleGatingDrop(event)">
+        <td class="gt-drag-handle" title="Drag to reorder">⋮⋮</td>
         <td style="padding-left: 16px;">
           <div class="gt-proj-info">
             <div class="gt-proj-color" style="background:${proj.color}"></div>
@@ -2619,13 +3318,16 @@ function renderGatingTable() {
           </div>
         </td>
         <td>
-          ${proj.vertical ? `<span class="vertical-badge">${proj.vertical}</span>` : '—'}
+          ${proj.vertical ? `<span class="vertical-badge" style="background:${(verticalConfig[proj.vertical] || verticalConfig.Others).bg};color:${(verticalConfig[proj.vertical] || verticalConfig.Others).color}">${proj.vertical}</span>` : '—'}
         </td>
         <td>
           <div class="gt-lead" style="display:flex;gap:4px;flex-wrap:wrap">
             ${proj.lead.split(', ').map(l => `<div class="gt-lead-avatar" style="background:${memberColors[l] || '#666'}">${l[0]}</div>`).join('')}
             <div class="gt-lead-name">${proj.lead}</div>
           </div>
+        </td>
+        <td>
+          ${proj.priority ? `<span class="priority-pill" style="background:${priorityConfig[proj.priority].bg};color:${priorityConfig[proj.priority].color}">${priorityConfig[proj.priority].icon} ${priorityConfig[proj.priority].label}</span>` : '—'}
         </td>
         ${msCells}
         <td class="gt-progress-cell">
@@ -2648,9 +3350,11 @@ function renderGatingTable() {
       <table class="gating-table">
         <thead>
           <tr>
+            <th class="gt-drag-handle-th"></th>
             <th style="padding-left:16px">Project</th>
             <th>Vertical</th>
             <th>Lead</th>
+            <th>Priority</th>
             ${headerCells}
             <th>Progress</th>
           </tr>
@@ -2695,7 +3399,7 @@ function getProjectStatus(proj) {
 
 function renderMembers() {
   const grid = document.getElementById('members-grid');
-  grid.innerHTML = members.map(m => {
+  grid.innerHTML = [...members].sort((a,b) => a.name.localeCompare(b.name)).map(m => {
     const rc = roleColors[m.role] || { bg:'var(--bg3)', color:'var(--text2)' };
     
     // Get projects led by this member
@@ -2729,7 +3433,7 @@ function renderMembers() {
     }).join('');
     
     return `
-      <div class="member-card">
+      <div class="member-card" onclick="filterByMember('${m.name.replace(/'/g, "\\'")}')">
         <div class="member-top">
           <div class="avatar member-avatar" style="background:${m.color}">${m.name[0]}</div>
           <div class="member-info">
@@ -2762,8 +3466,34 @@ function renderMembers() {
 }
 
 // ── Modal ────────────────────────────────────────────
-function openModal() {
+function openModal(projectName) {
+  resetDateInputs();
+  taskModalProject = projectName || null;
   refreshTaskProjectSelect();
+  const projectSel = document.getElementById('task-project-select');
+  const memberSel  = document.getElementById('task-member-select');
+  const prioritySel = document.getElementById('task-priority');
+
+  // Reset to defaults
+  if (projectSel.options.length > 0) projectSel.selectedIndex = 0;
+  memberSel.selectedIndex = 0;
+  prioritySel.value = 'medium';
+
+  // Pre-fill from project context
+  if (projectName) {
+    const proj = projects.find(p => p.name === projectName);
+    if (proj) {
+      // Project
+      projectSel.value = proj.name;
+      // Assignee → first lead
+      const firstLead = proj.lead.split(',')[0].trim();
+      const leadOption = Array.from(memberSel.options).find(o => o.value === firstLead);
+      if (leadOption) memberSel.value = firstLead;
+      // Priority
+      if (priorityConfig[proj.priority]) prioritySel.value = proj.priority;
+    }
+  }
+
   document.getElementById('modal-overlay').classList.add('open');
   document.getElementById('task-name-input').focus();
 }
@@ -2792,15 +3522,46 @@ async function createTask() {
   hideLoading();
 
   if (error) { showToast('Failed to create task: ' + error.message, true); return; }
-  tasks.push(rowToTask(data));
+  const newTask = rowToTask(data);
+  tasks.push(newTask);
+  const taskProject = newTask.project || 'Unassigned';
+  recordActivity('created', name, newTask.assignee, taskProject, `created task "${name}"`);
   document.getElementById('modal-overlay').classList.remove('open');
   document.getElementById('task-name-input').value = '';
   renderDashboardProjects();
   showToast(`Task "${name}" created 🎉`);
+
+  // If task was created under a specific project, navigate to filtered task list
+  if (taskModalProject) {
+    filterByProject(taskModalProject);
+    taskModalProject = null;
+    return;
+  }
+
   const active = document.querySelector('.page.active');
   if (active.id === 'page-kanban') renderKanban();
   if (active.id === 'page-list')   renderList(tasks);
   if (active.id === 'page-gating') renderGating();
+}
+
+// ── Pill Click to Select ──────────────────────────────
+function showPrioritySelect(pill) {
+  const td = pill.parentElement;
+  const sel = td.querySelector('.priority-select');
+  pill.style.display = 'none';
+  sel.style.display = 'inline';
+  sel.focus();
+  sel.addEventListener('blur', () => { pill.style.display = 'inline-flex'; sel.style.display = 'none'; }, { once: true });
+  sel.addEventListener('change', () => { pill.style.display = 'inline-flex'; sel.style.display = 'none'; }, { once: true });
+}
+function showStatusSelect(pill) {
+  const td = pill.parentElement;
+  const sel = td.querySelector('.status-select');
+  pill.style.display = 'none';
+  sel.style.display = 'inline';
+  sel.focus();
+  sel.addEventListener('blur', () => { pill.style.display = 'inline-flex'; sel.style.display = 'none'; }, { once: true });
+  sel.addEventListener('change', () => { pill.style.display = 'inline-flex'; sel.style.display = 'none'; }, { once: true });
 }
 
 // ── Toast ────────────────────────────────────────────
@@ -2838,9 +3599,13 @@ loadAll().then(() => {
   renderSidebarProjects();
   renderDashboard();
   refreshTaskProjectSelect();
+  populateFilterDropdowns();
   renderList(tasks);
 });
 
+
 </script>
+
+
 </body>
 </html>
