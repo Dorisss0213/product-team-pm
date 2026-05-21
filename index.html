@@ -2005,6 +2005,7 @@ function renderSidebarProjects() {
 
 function filterByProject(name) {
   // Navigate to task list and filter by project
+  currentPage = 'list';
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.querySelectorAll('.project-item').forEach(n => n.classList.remove('active'));
   currentProjectFilter = name;
@@ -2036,6 +2037,7 @@ function filterByProject(name) {
 
 function filterByMember(name) {
   // Navigate to task list and filter by assignee
+  currentPage = 'list';
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   // Highlight Task List nav
   const listNav = document.querySelector('.nav-item[onclick*="list"]');
@@ -2123,12 +2125,17 @@ async function deleteProject(id) {
   recordActivity('project-deleted', deletedName, deletedLead, deletedName, `deleted project "${deletedName}"`);
   projects = projects.filter(p => Number(p.id) !== numId);
   showToast(`Project "${p.name}" deleted`);
+  // Clear filter if the deleted project was selected
+  if (currentProjectFilter === p.name) {
+    currentProjectFilter = null;
+  }
   requestAnimationFrame(() => {
     renderSidebarProjects();
     switch (currentPage) {
       case 'kanban':   renderKanban(); break;
       case 'dashboard': renderDashboardProjects(); break;
-      case 'gating':    renderGating(); break;
+      case 'list':     applyFilters(); break;
+      case 'gating':   renderGating(); break;
       default: break;
     }
   });
@@ -2312,7 +2319,10 @@ async function createProject() {
   }
 
   const newProj = rowToProject(projData);
-  projects.push(newProj);
+  // Dedup: Realtime may have already added it
+  if (!projects.find(p => Number(p.id) === Number(newProj.id))) {
+    projects.push(newProj);
+  }
   recordActivity('project-created', name, leads[0], name, `created project "${name}"`);
 
   // If Gating, create 8 milestone tasks
@@ -2335,7 +2345,10 @@ async function createProject() {
       hideLoading();
       showToast('Project created but tasks failed: ' + tErr.message, true);
     } else {
-      (tRows || []).forEach(r => tasks.push(rowToTask(r)));
+      (tRows || []).forEach(r => {
+        const t = rowToTask(r);
+        if (!tasks.find(ex => Number(ex.id) === Number(t.id))) tasks.push(t);
+      });
       hideLoading();
       showToast(`Project "${name}" created with ${GATING_TASKS.length} milestones 🎉`);
     }
@@ -2347,16 +2360,7 @@ async function createProject() {
   document.getElementById('project-modal-overlay').classList.remove('open');
   requestAnimationFrame(() => {
     renderSidebarProjects();
-    switch (currentPage) {
-      case 'kanban':   renderKanban(); break;
-      case 'dashboard': renderDashboardProjects(); break;
-      case 'list':
-        refreshTaskProjectSelect();
-        filterByProject(name);
-        break;
-      case 'gating':    renderGating(); break;
-      default: break;
-    }
+    filterByProject(name);
   });
 }
 
@@ -2733,9 +2737,17 @@ function renderKanban() {
   board.innerHTML = '';
   columns.forEach(col => {
     const colProjects = projects.filter(p => getProjectStatus(p) === col.id);
-    // Sort by priority: High > Medium > Low
+    // Sort: priority High > Medium > Low, then due date closest first
     const priorityOrder = { high: 0, medium: 1, low: 2 };
-    colProjects.sort((a, b) => (priorityOrder[a.priority] || 9) - (priorityOrder[b.priority] || 9));
+    colProjects.sort((a, b) => {
+      const pa = priorityOrder[a.priority] ?? 9;
+      const pb = priorityOrder[b.priority] ?? 9;
+      if (pa !== pb) return pa - pb;
+      // Same priority: closer due date first (no due date at end)
+      const da = a.dueDate ? new Date(a.dueDate).getTime() : Infinity;
+      const db = b.dueDate ? new Date(b.dueDate).getTime() : Infinity;
+      return da - db;
+    });
     // Apply custom drag order within this column if present
     if (kanbanCustomOrder[col.id] && kanbanCustomOrder[col.id].length > 0) {
       const orderMap = {};
@@ -3006,7 +3018,10 @@ function applyFilters() {
   const assigneeVal = document.getElementById('filter-assignee')?.value || '';
   const statusVal = document.getElementById('filter-status')?.value || '';
 
-  let filtered = [...tasks];
+  // Only show tasks whose projects still exist (defense against orphan tasks)
+  const validProjectNames = new Set(projects.map(p => p.name));
+  let filtered = tasks.filter(t => !t.project || validProjectNames.has(t.project));
+
   if (projectVal) filtered = filtered.filter(t => t.project === projectVal);
   if (assigneeVal) filtered = filtered.filter(t => t.assignee === assigneeVal);
   if (statusVal) filtered = filtered.filter(t => t.status === statusVal);
@@ -3051,13 +3066,7 @@ async function toggleTask(id) {
   }
 
   const active = document.querySelector('.page.active');
-  if (active.id === 'page-list') {
-    if (currentProjectFilter) {
-      renderList(tasks.filter(t => t.project === currentProjectFilter));
-    } else {
-      renderList(tasks);
-    }
-  }
+  if (active.id === 'page-list') applyFilters();
   if (active.id === 'page-kanban') renderKanban();
   if (active.id === 'page-gating') renderGating();
   renderDashboardProjects();
@@ -3119,13 +3128,7 @@ async function updateTask(id, field, value) {
   }
 
   const active = document.querySelector('.page.active');
-  if (active.id === 'page-list') {
-    if (currentProjectFilter) {
-      renderList(tasks.filter(t => t.project === currentProjectFilter));
-    } else {
-      renderList(tasks);
-    }
-  }
+  if (active.id === 'page-list') applyFilters();
   if (active.id === 'page-kanban') renderKanban();
   if (active.id === 'page-gating') renderGating();
   renderDashboardProjects();
@@ -3178,13 +3181,7 @@ async function deleteTask(id) {
 
   // Refresh current view
   const active = document.querySelector('.page.active');
-  if (active.id === 'page-list') {
-    if (currentProjectFilter) {
-      renderList(tasks.filter(t => t.project === currentProjectFilter));
-    } else {
-      renderList(tasks);
-    }
-  }
+  if (active.id === 'page-list') applyFilters();
   if (active.id === 'page-kanban') renderKanban();
   if (active.id === 'page-gating') renderGating();
   renderDashboardProjects();
@@ -3483,15 +3480,36 @@ function getProjectStatus(proj) {
   return 'inprogress';  // In progress
 }
 
+// Get project status for a specific member (non-leads: only their own tasks matter)
+function getMemberProjectStatus(memberName, proj) {
+  const isLead = proj.lead && proj.lead.split(',').map(s => s.trim()).includes(memberName);
+  const myTasks = tasks.filter(t => t.project === proj.name && t.assignee === memberName);
+  // For leads with no own tasks, use project-level status; for non-leads, use own tasks
+  if (isLead && !myTasks.length) return getProjectStatus(proj);
+  if (!myTasks.length) return 'todo';
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const dueDate = new Date(proj.dueDate);
+  const isOverdue = dueDate < today && myTasks.some(t => t.status !== 'done');
+  if (isOverdue) return 'overdue';
+  const doneCount = myTasks.filter(t => t.status === 'done').length;
+  if (doneCount === 0) return 'todo';
+  if (doneCount === myTasks.length) return 'done';
+  return 'inprogress';
+}
+
 function renderMembers() {
   const grid = document.getElementById('members-grid');
   grid.innerHTML = [...members].sort((a,b) => a.name.localeCompare(b.name)).map(m => {
     const rc = roleColors[m.role] || { bg:'var(--bg3)', color:'var(--text2)' };
     
-    // Get projects led by this member
-    const memberProjects = projects.filter(p => p.lead.includes(m.name));
+    // Get projects: led by this member OR has tasks assigned to this member
+    const memberProjects = projects.filter(p => {
+      if (p.lead && p.lead.split(',').map(s => s.trim()).includes(m.name)) return true;
+      return tasks.some(t => t.project === p.name && t.assignee === m.name);
+    });
     const projectRows = memberProjects.map(proj => {
-      const status = getProjectStatus(proj);
+      const status = getMemberProjectStatus(m.name, proj);
       const statusLabels = {
         done: { label: 'Done', color: 'var(--green)' },
         inprogress: { label: 'In Progress', color: 'var(--accent)' },
@@ -3501,7 +3519,16 @@ function renderMembers() {
       const s = statusLabels[status];
       const today = new Date();
       today.setHours(0,0,0,0);
-      const dueDate = new Date(proj.dueDate);
+
+      // Non-leads: use their own tasks' earliest due date
+      const isLead = proj.lead && proj.lead.split(',').map(n => n.trim()).includes(m.name);
+      const myTasks = tasks.filter(t => t.project === proj.name && t.assignee === m.name);
+      let displayDue = proj.dueDate;
+      if (!isLead && myTasks.length > 0) {
+        const myDues = myTasks.filter(t => t.due).map(t => t.due).sort();
+        displayDue = myDues[0] || proj.dueDate;
+      }
+      const dueDate = new Date(displayDue);
       const isOverdue = dueDate < today && status !== 'done';
       
       return `
@@ -3511,7 +3538,7 @@ function renderMembers() {
             <span style="font-size:12.5px;font-weight:500;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${proj.name}</span>
           </div>
           <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
-            ${status !== 'done' && proj.dueDate ? `<span style="font-size:11px;color:${isOverdue?'var(--red)':'var(--text3)'}">${formatDate(proj.dueDate)}</span>` : ''}
+            ${status !== 'done' && displayDue ? `<span style="font-size:11px;color:${isOverdue?'var(--red)':'var(--text3)'}">${formatDate(displayDue)}</span>` : ''}
             <span class="member-proj-status" style="background:${s.color}22;color:${s.color}">${s.label}</span>
           </div>
         </div>
@@ -3533,11 +3560,11 @@ function renderMembers() {
             <div class="member-stat-label">Projects</div>
           </div>
           <div class="member-stat">
-            <div class="member-stat-val" style="color:var(--green)">${memberProjects.filter(p => getProjectStatus(p) === 'done').length}</div>
+            <div class="member-stat-val" style="color:var(--green)">${memberProjects.filter(p => getMemberProjectStatus(m.name, p) === 'done').length}</div>
             <div class="member-stat-label">Done</div>
           </div>
           <div class="member-stat">
-            <div class="member-stat-val" style="color:${memberProjects.filter(p => getProjectStatus(p) === 'overdue').length > 0 ? 'var(--red)' : 'var(--text3)'}">${memberProjects.filter(p => getProjectStatus(p) === 'overdue').length}</div>
+            <div class="member-stat-val" style="color:${memberProjects.filter(p => getMemberProjectStatus(m.name, p) === 'overdue').length > 0 ? 'var(--red)' : 'var(--text3)'}">${memberProjects.filter(p => getMemberProjectStatus(m.name, p) === 'overdue').length}</div>
             <div class="member-stat-label">Overdue</div>
           </div>
         </div>
@@ -3614,7 +3641,10 @@ async function createTask() {
 
   if (error) { showToast('Failed to create task: ' + error.message, true); return; }
   const newTask = rowToTask(data);
-  tasks.push(newTask);
+  // Dedup: Realtime may have already added it
+  if (!tasks.find(t => Number(t.id) === Number(newTask.id))) {
+    tasks.push(newTask);
+  }
   const taskProject = newTask.project || 'Unassigned';
   recordActivity('created', name, newTask.assignee, taskProject, `created task "${name}"`);
   document.getElementById('modal-overlay').classList.remove('open');
@@ -3630,7 +3660,7 @@ async function createTask() {
 
   const active = document.querySelector('.page.active');
   if (active.id === 'page-kanban') renderKanban();
-  if (active.id === 'page-list')   renderList(tasks);
+  if (active.id === 'page-list')   applyFilters();
   if (active.id === 'page-gating') renderGating();
 }
 
@@ -3731,7 +3761,10 @@ function handleProjectRealtime(payload) {
 
   switch (eventType) {
     case 'INSERT':
-      projects.push(rowToProject(newRow));
+      // Avoid duplicates: already added locally by createProject/createTask
+      if (!projects.find(p => Number(p.id) === Number(newRow.id))) {
+        projects.push(rowToProject(newRow));
+      }
       break;
     case 'UPDATE': {
       const idx = projects.findIndex(p => Number(p.id) === Number(newRow.id));
@@ -3751,7 +3784,10 @@ function handleTaskRealtime(payload) {
 
   switch (eventType) {
     case 'INSERT':
-      tasks.push(rowToTask(newRow));
+      // Avoid duplicates: already added locally by createProject (gating tasks) / createTask
+      if (!tasks.find(t => Number(t.id) === Number(newRow.id))) {
+        tasks.push(rowToTask(newRow));
+      }
       break;
     case 'UPDATE': {
       const idx = tasks.findIndex(t => Number(t.id) === Number(newRow.id));
@@ -3776,8 +3812,7 @@ function safeReRender() {
       case 'kanban':   renderKanban(); break;
       case 'dashboard': renderDashboard(); break;
       case 'list':
-        renderList(tasks);
-        refreshTaskProjectSelect();
+        applyFilters();
         break;
       case 'gating':    renderGating(); break;
       default: break;
