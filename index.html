@@ -2442,6 +2442,9 @@ async function updateProject() {
   const vertical = document.getElementById('proj-vertical-select').value;
   if (!vertical) { showToast('Please select a vertical', true); return; }
 
+  const oldName = proj.name;
+  const nameChanged = (oldName !== name);
+
   showLoading('Saving...');
 
   const { error } = await sb.from('projects').update({
@@ -2456,6 +2459,18 @@ async function updateProject() {
     return;
   }
 
+  // If project name changed, migrate all tasks to the new name
+  if (nameChanged) {
+    const { error: taskErr } = await sb.from('tasks').update({ project: name }).eq('project', oldName);
+    if (taskErr) {
+      console.warn('Failed to migrate tasks to new project name:', taskErr.message);
+      showToast('Project updated but task migration failed — some tasks may be missing', true);
+    } else {
+      // Update local tasks array
+      tasks.forEach(t => { if (t.project === oldName) t.project = name; });
+    }
+  }
+
   // Update local project
   Object.assign(proj, { name, color: selectedColor, desc, category, lead, priority, startDate, dueDate, vertical });
   recordActivity('project-updated', name, selectedLeads[0] || lead, name, `updated project "${name}"`);
@@ -2468,10 +2483,38 @@ async function updateProject() {
   // Defer renders to next frame — avoids blocking UI after save
   requestAnimationFrame(() => {
     renderSidebarProjects();
+
+    // If project was renamed, update all UI that references the old name
+    if (nameChanged) {
+      // Update filter variables
+      if (currentProjectFilter === oldName) currentProjectFilter = name;
+      if (gatingProjectFilter === oldName) gatingProjectFilter = name;
+
+      // Rebuild all filter dropdowns so old name is replaced by new name
+      populateFilterDropdowns();
+      // If the user was filtering by this project, switch the dropdown to the new name
+      if (currentProjectFilter === name) {
+        const projSel = document.getElementById('filter-project');
+        if (projSel) projSel.value = name;
+      }
+      // Also rebuild the gating filter dropdown
+      const gatingSel = document.getElementById('gating-project-filter');
+      if (gatingSel) {
+        const prev = gatingSel.value;
+        gatingSel.innerHTML = '<option value="">All</option>' +
+          projects.filter(p => p.category === 'Gating').map(p => `<option value="${p.name}">${p.name}</option>`).join('');
+        gatingSel.value = (prev === oldName) ? name : prev;
+      }
+    }
+
     switch (currentPage) {
       case 'kanban':   renderKanban(); break;
       case 'dashboard': renderDashboardProjects(); break;
-      case 'list':      refreshTaskProjectSelect(); break;
+      case 'list':
+        refreshTaskProjectSelect();
+        // Always re-apply filters so renamed project's tasks show up
+        applyFilters();
+        break;
       case 'gating':    renderGating(); break;
       default: break;
     }
